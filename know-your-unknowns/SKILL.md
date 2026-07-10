@@ -32,12 +32,14 @@ Diagnose which kind dominates, then pick the technique that hunts it (table belo
 
 7. **Discovery artifacts are scaffolding — keep them out of the changeset.** Mocks, design directions, reports, and note files live in a scratch directory, never inside the app's source tree, and are not committed unless the user asks. In a git repo, add them to `.git/info/exclude` (not `.gitignore`, which would itself dirty the diff).
 
+8. **Host note (Cursor / Claude Code).** Install once under `~/.claude/skills/know-your-unknowns/` — Cursor loads user skills from there; do not duplicate into `~/.cursor/skills`. HTML artifacts open via `file://` or the system browser; scratch paths and `.git/info/exclude` hygiene apply the same in both hosts.
+
 ## Choosing a technique
 
 Selection rules:
 
 - **Honor an explicit trigger.** If the user says "interview me," run the interview — never silently substitute a different technique.
-- **No default technique triggered?** For non-trivial tasks, run the compact unknowns scan and apply the ask-vs-decide policy from [scan-and-policies.md](references/scan-and-policies.md) — that file also lists the territory-inspection checklist and the failure modes to avoid.
+- **No default technique triggered?** For non-trivial tasks, run the compact unknowns scan and apply the ask-vs-decide policy from [scan-and-policies.md](references/scan-and-policies.md) — that file also lists the territory-inspection checklist and the failure modes to avoid. End every scan with a **Suggested trigger phrase** (English + Chinese when helpful): one copy-paste sentence the user can send to run the recommended next technique.
 - **User asks to implement immediately?** Don't force a pre-implementation ritual: compact scan, ask-or-decide, then implement (with implementation notes if non-trivial).
 - **Over-specific prompts** ("just copy this file", "just add a field") can encode a wrong assumption — verify the premise against the territory before executing literally.
 
@@ -64,4 +66,33 @@ Read the linked reference file for the full workflow before executing.
 3. **Anchor, then investigate the territory.** Read the actual code, git history, feature flags, and configs. If the demo-style content can't be grounded in the real project, say so and scope the investigation with the user.
 4. **Build the artifact** as one self-contained `.html` file per [artifact-patterns.md](references/artifact-patterns.md), starting from [assets/artifact-skeleton.html](assets/artifact-skeleton.html).
 5. **Deliver and collect.** Tell the user the file path, what to do, and what reply to send back. The reply is structured input for the next step.
-6. **Fold the answers forward.** Reactions become the next prompt, the revised plan, or the merge decision. Techniques chain — a typical full-feature flow: blindspot pass → interview → tweakable plan → implementation notes → buy-in doc → merge quiz. These are tools, not a mandatory pipeline; run only what the dominant unknowns justify, and when the user has already made a decision an artifact would re-litigate, skip it and proceed.
+6. **Fold the answers forward** per the protocol below. Techniques chain — a typical full-feature flow: blindspot pass → interview → tweakable plan → implementation notes → buy-in doc → merge quiz. These are tools, not a mandatory pipeline; run only what the dominant unknowns justify, and when the user has already made a decision an artifact would re-litigate, skip it and proceed.
+
+## Fold-forward protocol
+
+When the user pastes a reply from an artifact's reply builder (or sends an equivalent structured message), treat it as **binding input**, not background prose.
+
+1. **Parse explicitly.** Extract labeled fields: direction choices, steal/skip lists, resonate selections, A/B answers, approve/change per decision, go/no-go, `semantics confirmed`, quiz score, deferred items marked `(unanswered)`.
+2. **Apply before acting.** Update the plan, decisions table, or implementation prompt to reflect every parsed choice. Unanswered items stay visible as open assumptions — do not silently fill them in.
+3. **Do not ignore and implement.** Never start coding, porting, or merging in the same turn if the pasted reply changes scope, architecture, or gates — acknowledge what changed, then proceed only along the updated path.
+4. **Gate phrases are hard stops until satisfied:**
+   - Reference port: no code until the user replies **`semantics confirmed`** (or sends corrections to the map).
+   - Tweakable plan: no implementation until explicit **go** (or listed tweaks are folded in first).
+   - Merge quiz: no merge checklist until **perfect score** on the quiz section.
+5. **Chain forward.** After folding, state the next artifact or phase (e.g. "plan updated — open the handoff bundle when you start a fresh implementation session").
+
+## Implementation session handoff
+
+After pre-implementation artifacts are approved (especially a tweakable plan), **start implementation in a fresh session** with a clean context window — per the field guide, planning context is compiled into files, not chat scrollback.
+
+**Bring into the new session (attach or @-mention paths):**
+
+- Approved plan artifact (`.html` or exported decisions)
+- Improved implementation prompt / decisions table from interview or blindspot pass
+- Approved mock or design-direction artifact if UX was settled there
+- Reference semantics map if porting
+- `implementation-notes.md` path (create empty or continue existing)
+
+**Leave behind:** exploratory chat, rejected design directions, intermediate brainstorm cards the user did not select.
+
+**First message in the new session** should restate goal + folded decisions + "keep implementation notes per [implementation-notes.md](references/implementation-notes.md)." See that reference for log format and session-end digest.

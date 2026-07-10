@@ -6,6 +6,17 @@
 
 **Prompt shape:** *"While you implement, keep a dated log file. Record every point where reality differed from the plan, what you chose, and why. Categorize entries; flag anything that needs my judgment instead of silently deciding."*
 
+## Handoff from planning session
+
+Implementation notes usually start in a **new session** after plan approval. The first turn should confirm the handoff bundle (see [SKILL.md](../SKILL.md)):
+
+- Approved plan / decisions table attached
+- Goal restated in one paragraph
+- Log path agreed (`implementation-notes.md` at project root or scratch)
+- Instruction to append on every deviation, not batch at the end
+
+If the user continues in the same session without handoff, still create the log file before the first source edit.
+
 ## Mechanics
 
 - Create `implementation-notes.md` at the project root (or the user's preferred path). Append dated sections for new tasks rather than overwriting.

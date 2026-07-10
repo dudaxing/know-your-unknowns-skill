@@ -37,7 +37,7 @@
 
 即使没有触发任何技术，[references/scan-and-policies.md](know-your-unknowns/references/scan-and-policies.md) 也为非平凡任务提供默认行为：
 
-- **Unknowns scan**——开工前 7 行的四类未知分类扫描，以"建议下一步"收尾。
+- **Unknowns scan**——开工前 compact 四类未知分类扫描，以「建议下一步」与 **Suggested trigger phrase（可复制触发句）** 收尾。
 - **问答决策政策（ask-vs-decide）**——架构/数据/权限/发布类决策必须暂停询问；局部、可逆、常规的决策则保守决定并按模板记录假设。
 - **疆域检查清单**——feature flags、迁移、legacy 数据、被 revert 的 PR、环境差异、既有工具、评审者预期。
 - **14 条须规避的失败模式**——例如"复制最相似的文件而不检查它是否是个例外"、"把 dev/staging 行为当生产真相"、"把单测通过当权限安全的证明"。
@@ -64,9 +64,52 @@ Copy-Item -Recurse know-your-unknowns-skill/know-your-unknowns "$env:USERPROFILE
 
 新会话自动生效。验证方式：对 Claude Code 说 *"对 auth 模块做一次盲区扫描"*。
 
+### Cursor
+
+Cursor 会从 **`~/.claude/skills/`** 加载个人 skill（与 Claude Code 共用目录）。在本仓库开发时可直接使用已存在的 `know-your-unknowns/` 目录；安装到其他项目时：
+
+```powershell
+Copy-Item -Recurse D:\Coding\know-your-unkowns\know-your-unknowns "$env:USERPROFILE\.claude\skills\"
+```
+
+**不要**再复制一份到 `~/.cursor/skills/`。HTML 工件用浏览器打开 `file://` 路径即可；scratch 目录与 `.git/info/exclude` 规则在 Cursor 中同样适用。
+
+验证方式：在 Cursor Agent 中说 *"对 auth 模块做一次盲区扫描"* 或 *"就导出功能访谈我"*。
+
 ### 打包版 `.skill` 文件
 
 [dist/know-your-unknowns.skill](dist/know-your-unknowns.skill) 是经过校验的打包分发版（带 `.skill` 扩展名的 zip），适用于接受 skill 上传的平台。
+
+## 如何用这套 skill 科学地设计代码
+
+**地图 ≠ 疆域。** 先花小成本关闭 unknowns，再让 agent 写代码。
+
+1. **说清任务** — 若未指定技巧，agent 会先跑 compact **Unknowns scan**（四类未知 + 建议下一招 + **可复制触发句**）。
+2. **选对技巧** — 见上表；显式触发优先（如「访谈我」「盲区扫描」）。
+3. **反应式工件** — 比较/布局/测验类产出为单文件 HTML；在页面底部用 reply builder 复制结构化回复，**粘贴回对话**。
+4. **折入下一轮** — agent 按 Fold-forward 协议解析回复、更新计划/决策，**不会当散文忽略**；门禁词：`semantics confirmed`、计划 **go**、测验满分。
+5. **新会话实现** — 计划通过后 **新开 Agent 会话**，只附带计划、决策表、mock/语义地图与 `implementation-notes.md` 路径（见 SKILL.md handoff）。
+6. **实现中** — 用实现笔记记录偏差；**实现后** — buy-in 文档 / 合并前测验按需选用。
+
+典型可选链路：盲区 → 访谈 → 可调计划 → 实现笔记 → buy-in → 合并测验。**工具箱，非流水线。**
+
+## 与 Thariq 博客演示的对照
+
+| 博客演示 | 本 skill 参考 |
+|----------|----------------|
+| [01 Blindspot pass](https://thariqs.github.io/html-effectiveness/unknowns/01-blindspot-pass.html) | [blindspot-pass.md](know-your-unknowns/references/blindspot-pass.md) |
+| [02 Teach me / color grading](https://thariqs.github.io/html-effectiveness/unknowns/02-color-grading-explainer.html) | [teach-me.md](know-your-unknowns/references/teach-me.md) |
+| [03 Four design directions](https://thariqs.github.io/html-effectiveness/unknowns/03-design-directions.html) | [design-directions.md](know-your-unknowns/references/design-directions.md) |
+| [04 Mock before you wire](https://thariqs.github.io/html-effectiveness/unknowns/04-toolbar-mock.html) | [mock-first.md](know-your-unknowns/references/mock-first.md) |
+| [05 Brainstorm interventions](https://thariqs.github.io/html-effectiveness/unknowns/05-churn-brainstorm.html) | [brainstorm-interventions.md](know-your-unknowns/references/brainstorm-interventions.md) |
+| [06 The interview](https://thariqs.github.io/html-effectiveness/unknowns/06-interview.html) | [interview.md](know-your-unknowns/references/interview.md) |
+| [07 Point at a reference](https://thariqs.github.io/html-effectiveness/unknowns/07-reference-port.html) | [reference-port.md](know-your-unknowns/references/reference-port.md) |
+| [08 Tweakable plan](https://thariqs.github.io/html-effectiveness/unknowns/08-implementation-plan.html) | [tweakable-plan.md](know-your-unknowns/references/tweakable-plan.md) |
+| [09 Implementation notes](https://thariqs.github.io/html-effectiveness/unknowns/09-implementation-notes.html) | [implementation-notes.md](know-your-unknowns/references/implementation-notes.md) |
+| [10 Buy-in doc](https://thariqs.github.io/html-effectiveness/unknowns/10-pitch-doc.html) | [buy-in-doc.md](know-your-unknowns/references/buy-in-doc.md) |
+| [11 Merge quiz](https://thariqs.github.io/html-effectiveness/unknowns/11-change-quiz.html) | [merge-quiz.md](know-your-unknowns/references/merge-quiz.md) |
+
+博文：[Finding your unknowns](https://claude.com/blog/a-field-guide-to-claude-fable-finding-your-unknowns) · 演示索引：[unknowns 配套站](https://thariqs.github.io/html-effectiveness/unknowns/)
 
 ## 使用示例
 
@@ -102,6 +145,8 @@ know-your-unknowns/            skill 本体（把这个目录复制到 ~/.claude
 │   ├── artifact-patterns.md   HTML artifact 构建规范 + reply-builder 说明
 │   ├── blindspot-pass.md      …… 到 ……
 │   └── merge-quiz.md          （共 11 个技术文件）
+├── evals/
+│   └── smoke-triggers.md      触发句 → 期望行为验收用例
 └── assets/
     └── artifact-skeleton.html 可复用单文件骨架：芯片、复选框、reply builder
 dist/

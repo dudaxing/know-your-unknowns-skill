@@ -16,6 +16,27 @@ Open with **summary chips** — one glanceable line: effort, files touched, migr
 
 Per-decision approve/change chips assembling into a copyable reply, ending in an **explicit go/no-go choice**: approve and start, adjust first, or reject. Also include **"tweak these first"** — the 2–4 one-line overrides the user is most likely to send ("switch storage to render-on-demand", "cut the CSV format"), each copyable as-is. Do not begin implementation in the same turn as presenting the plan — the pause is the point.
 
+## Handoff bundle (after go)
+
+When the user approves, compile a **handoff bundle** for a fresh implementation session (see [SKILL.md](../SKILL.md) — Implementation session handoff):
+
+- Path to this plan artifact
+- Folded decisions from the reply builder (restated in chat or as a short `decisions.md` in scratch)
+- Any linked mock, semantics map, or improved prompt from earlier techniques
+- Empty or continued `implementation-notes.md` path
+
+Tell the user to start a **new session** and attach these files rather than continuing the planning thread.
+
+## Optional: plan gate verification
+
+If the project uses **codex-verify** plan gates (`.codex-verify/plan-approved`, Cursor/Claude hooks), suggest running plan review **before** source edits:
+
+```bash
+bash ~/.claude/skills/codex-verify/scripts/verify.sh plan "$(cat path/to/plan-export.md)"
+```
+
+Export the approved plan sections (decisions + sequencing + allowed paths) to a markdown file under `.codex-verify/plans/` first. PASS writes the marker and unlocks gated edits; this skill does not require codex-verify — mention it only when hooks or `.codex-verify/` already exist in the repo.
+
 ## Rules
 
 - The plan enables review, not enforcement — it should make the likely error points visible, not prescribe every keystroke.

@@ -37,7 +37,7 @@ Based on Thariq Shihipar's **"Know Your Unknowns"** field guide and its [compani
 
 Even when no technique is triggered, the skill provides defaults for any non-trivial task ([references/scan-and-policies.md](know-your-unknowns/references/scan-and-policies.md)):
 
-- **The unknowns scan** — a 7-line pre-flight classification of what's known, unknown, and suspected, ending in a recommended next move.
+- **The unknowns scan** — a compact pre-flight classification of what's known, unknown, and suspected, ending in a recommended next move and a **copy-paste trigger phrase**.
 - **Ask-vs-decide policy** — pause for architecture/data/permissions/rollout decisions; decide-and-log (with an assumption record) for local, reversible, conventional ones.
 - **Territory inspection checklist** — flags, migrations, legacy data, reverted PRs, env splits, existing utilities, reviewer expectations.
 - **14 failure modes to avoid** — e.g. copying the most-similar file without checking it's an exception; treating dev/staging behavior as production truth; treating a passing unit test as proof of permission safety.
@@ -64,9 +64,52 @@ Copy-Item -Recurse know-your-unknowns-skill/know-your-unknowns "$env:USERPROFILE
 
 New sessions pick it up automatically. Verify by asking Claude Code: *"Do a blindspot pass on the auth module."*
 
+### Cursor
+
+Cursor loads personal skills from **`~/.claude/skills/`** (same path as Claude Code). To install from this repo:
+
+```powershell
+Copy-Item -Recurse D:\Coding\know-your-unkowns\know-your-unknowns "$env:USERPROFILE\.claude\skills\"
+```
+
+Do **not** duplicate into `~/.cursor/skills/`. Open HTML artifacts via `file://` in a browser; scratch-directory and `.git/info/exclude` hygiene apply in Cursor too.
+
+Verify in Cursor Agent: *"Do a blindspot pass on the auth module"* or *"Interview me about the export feature."*
+
 ### Packaged `.skill` file
 
 [dist/know-your-unknowns.skill](dist/know-your-unknowns.skill) is the validated, packaged distribution (a zip with a `.skill` extension) for platforms that accept skill uploads.
+
+## How to use this skill scientifically
+
+**The map is not the territory.** Close unknowns cheaply before asking the agent to implement.
+
+1. **State the task** — If no technique is named, the agent runs a compact **Unknowns scan** (four unknown types + recommended next move + **copy-paste trigger phrase**).
+2. **Pick the technique** — See the table above; honor explicit triggers ("interview me", "blindspot pass").
+3. **React via artifacts** — Comparisons, layouts, and quizzes ship as single-file HTML; use the reply builder, then **paste the structured reply back** into chat.
+4. **Fold forward** — The agent parses labeled fields and updates plans/decisions; it does **not** treat replies as background prose. Gates: `semantics confirmed`, plan **go**, perfect quiz score.
+5. **Fresh session for implementation** — After plan approval, **start a new Agent session** with only the handoff bundle (plan, decisions, mocks/maps, `implementation-notes.md` path). See SKILL.md.
+6. **During / after** — Implementation notes for deviations; buy-in doc and merge quiz when shipping.
+
+Optional chain: blindspot → interview → tweakable plan → notes → buy-in → quiz. **Toolbox, not a mandatory pipeline.**
+
+## Mapping to Thariq's blog demos
+
+| Blog demo | This skill |
+|-----------|------------|
+| [01 Blindspot pass](https://thariqs.github.io/html-effectiveness/unknowns/01-blindspot-pass.html) | [blindspot-pass.md](know-your-unknowns/references/blindspot-pass.md) |
+| [02 Teach me / color grading](https://thariqs.github.io/html-effectiveness/unknowns/02-color-grading-explainer.html) | [teach-me.md](know-your-unknowns/references/teach-me.md) |
+| [03 Four design directions](https://thariqs.github.io/html-effectiveness/unknowns/03-design-directions.html) | [design-directions.md](know-your-unknowns/references/design-directions.md) |
+| [04 Mock before you wire](https://thariqs.github.io/html-effectiveness/unknowns/04-toolbar-mock.html) | [mock-first.md](know-your-unknowns/references/mock-first.md) |
+| [05 Brainstorm interventions](https://thariqs.github.io/html-effectiveness/unknowns/05-churn-brainstorm.html) | [brainstorm-interventions.md](know-your-unknowns/references/brainstorm-interventions.md) |
+| [06 The interview](https://thariqs.github.io/html-effectiveness/unknowns/06-interview.html) | [interview.md](know-your-unknowns/references/interview.md) |
+| [07 Point at a reference](https://thariqs.github.io/html-effectiveness/unknowns/07-reference-port.html) | [reference-port.md](know-your-unknowns/references/reference-port.md) |
+| [08 Tweakable plan](https://thariqs.github.io/html-effectiveness/unknowns/08-implementation-plan.html) | [tweakable-plan.md](know-your-unknowns/references/tweakable-plan.md) |
+| [09 Implementation notes](https://thariqs.github.io/html-effectiveness/unknowns/09-implementation-notes.html) | [implementation-notes.md](know-your-unknowns/references/implementation-notes.md) |
+| [10 Buy-in doc](https://thariqs.github.io/html-effectiveness/unknowns/10-pitch-doc.html) | [buy-in-doc.md](know-your-unknowns/references/buy-in-doc.md) |
+| [11 Merge quiz](https://thariqs.github.io/html-effectiveness/unknowns/11-change-quiz.html) | [merge-quiz.md](know-your-unknowns/references/merge-quiz.md) |
+
+Blog post: [Finding your unknowns](https://claude.com/blog/a-field-guide-to-claude-fable-finding-your-unknowns) · Demo index: [companion site](https://thariqs.github.io/html-effectiveness/unknowns/)
 
 ## Usage examples
 
@@ -102,6 +145,8 @@ know-your-unknowns/            The skill (copy this directory to ~/.claude/skill
 │   ├── artifact-patterns.md   HTML artifact construction rules + reply-builder spec
 │   ├── blindspot-pass.md      … through …
 │   └── merge-quiz.md          (11 technique files total)
+├── evals/
+│   └── smoke-triggers.md      Trigger → expected-behavior acceptance cases
 └── assets/
     └── artifact-skeleton.html Reusable single-file skeleton: chips, checkboxes, reply builder
 dist/
