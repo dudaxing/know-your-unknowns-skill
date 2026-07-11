@@ -1,0 +1,257 @@
+{
+  "schema_version": 1,
+  "skill": "reduce-critical-unknowns",
+  "purpose": "Expected routing labels for static review or a harness that can observe whether Codex loaded SKILL.md. These labels are not execution results.",
+  "cases": [
+    {
+      "id": "pos-auth-session-migration",
+      "split": "train",
+      "category": "positive",
+      "prompt": "Add rotating sessions to an unfamiliar legacy auth module while old and new services overlap. Work out migration, permissions, flags, logout events, and rollback before enabling writes.",
+      "expected_activation": true,
+      "expected_intensity": "full",
+      "required_signals": ["authentication", "migration", "rollback", "unfamiliar"],
+      "rationale": "Multiple high-impact, weakly evidenced, hard-to-reverse boundaries."
+    },
+    {
+      "id": "pos-schema-consumers",
+      "split": "train",
+      "category": "positive",
+      "prompt": "Change this persisted schema field across independently deployed producers and consumers, including legacy rows and a destructive cleanup migration.",
+      "expected_activation": true,
+      "expected_intensity": "full",
+      "required_signals": ["schema", "consumers", "migration", "legacy"],
+      "rationale": "The compatibility and deploy-order unknowns can change the design."
+    },
+    {
+      "id": "pos-rust-typescript-port",
+      "split": "train",
+      "category": "positive",
+      "prompt": "Port this Rust retry controller to TypeScript exactly, including cancellation, jitter, typed errors, a shared budget, and concurrency behavior.",
+      "expected_activation": true,
+      "expected_intensity": "full",
+      "required_signals": ["Rust", "TypeScript", "retry", "semantics"],
+      "rationale": "Cross-runtime observable semantics require an explicit oracle."
+    },
+    {
+      "id": "pos-vague-export",
+      "split": "train",
+      "category": "positive",
+      "prompt": "Build the important new export feature. The requirement says nothing else and several product areas already have downloads.",
+      "expected_activation": true,
+      "expected_intensity": "full",
+      "required_signals": ["important", "ambiguous", "existing implementation"],
+      "rationale": "The meaning of export can change permissions, data, and architecture."
+    },
+    {
+      "id": "pos-plan-deviation",
+      "split": "train",
+      "category": "positive",
+      "prompt": "Implementation proved a plan assumption false: legacy records use null tenant IDs and the proposed cache key crosses an authorization boundary. Triage the deviation.",
+      "expected_activation": true,
+      "expected_intensity": "full",
+      "required_signals": ["plan assumption", "legacy", "authorization", "deviation"],
+      "rationale": "A material implementation surprise changes security and verification."
+    },
+    {
+      "id": "pos-risky-diff",
+      "split": "validation",
+      "category": "positive",
+      "prompt": "Before merging this large diff, independently verify a state-machine replacement, data migration, retry changes, rollout flag, rollback, and operational evidence.",
+      "expected_activation": true,
+      "expected_intensity": "full",
+      "required_signals": ["large diff", "migration", "rollout", "rollback"],
+      "rationale": "Green unit tests cannot establish merge readiness across these boundaries."
+    },
+    {
+      "id": "pos-permission-model",
+      "split": "validation",
+      "category": "positive",
+      "prompt": "We are changing guest-to-member account linking and nobody knows whether permissions should be copied, recalculated, or frozen during migration.",
+      "expected_activation": true,
+      "expected_intensity": "full",
+      "required_signals": ["permissions", "human decision", "migration"],
+      "rationale": "The wrong default can create privilege errors or data exposure."
+    },
+    {
+      "id": "pos-rollback-oracle",
+      "split": "validation",
+      "category": "positive",
+      "prompt": "The rollout plan writes a new irreversible state, but the rollback behavior and acceptance oracle are still unclear. Find the cheapest decisive probe.",
+      "expected_activation": true,
+      "expected_intensity": "full",
+      "required_signals": ["irreversible", "rollback", "oracle", "probe"],
+      "rationale": "An unresolved premise controls whether the branch is safe to ship."
+    },
+    {
+      "id": "explicit-blindspot",
+      "split": "train",
+      "category": "explicit",
+      "prompt": "Run a blindspot pass on the unfamiliar billing retry module before you edit it.",
+      "expected_activation": true,
+      "expected_intensity": "bounded",
+      "required_signals": ["honor explicit probe", "territory scan", "stop condition"],
+      "rationale": "Respect the named intent without forcing other technique families."
+    },
+    {
+      "id": "explicit-semantics-map",
+      "split": "train",
+      "category": "explicit",
+      "prompt": "Make a semantics map for the Go-to-Python stream parser, then implement only if the boundary behavior has an oracle.",
+      "expected_activation": true,
+      "expected_intensity": "bounded",
+      "required_signals": ["semantics map", "observable behavior", "oracle"],
+      "rationale": "The explicit technique maps directly to one probe family."
+    },
+    {
+      "id": "explicit-interview",
+      "split": "validation",
+      "category": "explicit",
+      "prompt": "Interview me about the one architecture-changing decision for this export feature, but inspect the repository-answerable facts first.",
+      "expected_activation": true,
+      "expected_intensity": "bounded",
+      "required_signals": ["human-owned choice", "evidence first", "one question"],
+      "rationale": "Honor a focused decision probe and avoid a broad questionnaire."
+    },
+    {
+      "id": "explicit-small-task",
+      "split": "validation",
+      "category": "explicit",
+      "prompt": "Use the critical-unknowns skill on this five-line local variable rename, then make the change.",
+      "expected_activation": true,
+      "expected_intensity": "lightweight",
+      "required_signals": ["at most one assumption", "implement", "focused test"],
+      "rationale": "Explicit invocation should be respected without starting a full workflow."
+    },
+    {
+      "id": "immediate-auth",
+      "split": "train",
+      "category": "immediate",
+      "prompt": "Implement the auth migration immediately; do not make me sit through a long planning ritual.",
+      "expected_activation": true,
+      "expected_intensity": "premise-check-then-implement",
+      "required_signals": ["smallest premise check", "continue safe work", "pause affected branch"],
+      "rationale": "Urgency changes ceremony, not the need to test a design-reversing premise."
+    },
+    {
+      "id": "immediate-destructive-schema",
+      "split": "validation",
+      "category": "immediate",
+      "prompt": "Delete the legacy column and deploy now even though one consumer and the rollback path have not been checked.",
+      "expected_activation": true,
+      "expected_intensity": "premise-check-then-implement",
+      "required_signals": ["consumer evidence", "rollback", "branch-local pause"],
+      "rationale": "The destructive branch must pause while safe evidence gathering continues."
+    },
+    {
+      "id": "near-auth-doc-typo",
+      "split": "train",
+      "category": "near_negative",
+      "prompt": "Fix the misspelling 'autorization' in the authentication migration guide. Do not change code or meaning.",
+      "expected_activation": false,
+      "expected_intensity": "none",
+      "required_signals": ["typo", "documentation-only"],
+      "rationale": "Shares high-risk nouns but is an exact, reversible text edit."
+    },
+    {
+      "id": "near-schema-doc-format",
+      "split": "train",
+      "category": "near_negative",
+      "prompt": "Alphabetize the keys in a JSON schema example in the docs; the actual schema and generated output are unchanged.",
+      "expected_activation": false,
+      "expected_intensity": "none",
+      "required_signals": ["format-only", "example"],
+      "rationale": "Schema is only a neighboring keyword."
+    },
+    {
+      "id": "near-port-local-rename",
+      "split": "train",
+      "category": "near_negative",
+      "prompt": "In the TypeScript port helper, rename local variable retryBudgetTmp to budget. The focused tests already pass and no behavior changes.",
+      "expected_activation": false,
+      "expected_intensity": "none",
+      "required_signals": ["local rename", "no behavior change"],
+      "rationale": "Port/retry words should not override the low-risk boundary."
+    },
+    {
+      "id": "near-large-diff-format",
+      "split": "train",
+      "category": "near_negative",
+      "prompt": "Run the repository formatter on the already-reviewed large diff; make no semantic changes.",
+      "expected_activation": false,
+      "expected_intensity": "none",
+      "required_signals": ["format-only", "specified command"],
+      "rationale": "A large diff mention alone is insufficient."
+    },
+    {
+      "id": "near-export-label",
+      "split": "validation",
+      "category": "near_negative",
+      "prompt": "Change the export button label from 'Export now' to the approved copy 'Download report'. No behavior or localization key changes.",
+      "expected_activation": false,
+      "expected_intensity": "none",
+      "required_signals": ["approved copy", "no behavior change"],
+      "rationale": "An exact presentation-only edit should not trigger feature discovery."
+    },
+    {
+      "id": "near-known-null-fix",
+      "split": "validation",
+      "category": "near_negative",
+      "prompt": "Add the missing null guard to this private helper. The failing test, expected return value, and repository pattern are already supplied; the change is one line.",
+      "expected_activation": false,
+      "expected_intensity": "none",
+      "required_signals": ["well specified", "private", "reversible"],
+      "rationale": "There is no decision-changing evidence gap."
+    },
+    {
+      "id": "neg-readme-typo",
+      "split": "train",
+      "category": "negative",
+      "prompt": "Correct one typo in README.md.",
+      "expected_activation": false,
+      "expected_intensity": "none",
+      "required_signals": ["typo"],
+      "rationale": "Clear trivial edit."
+    },
+    {
+      "id": "neg-local-variable",
+      "split": "train",
+      "category": "negative",
+      "prompt": "Rename a local variable in one five-line function and run its focused unit test.",
+      "expected_activation": false,
+      "expected_intensity": "none",
+      "required_signals": ["local rename"],
+      "rationale": "Clear, bounded, reversible change."
+    },
+    {
+      "id": "neg-formatting",
+      "split": "train",
+      "category": "negative",
+      "prompt": "Apply the configured formatter to this file.",
+      "expected_activation": false,
+      "expected_intensity": "none",
+      "required_signals": ["formatting"],
+      "rationale": "Mechanical repository command."
+    },
+    {
+      "id": "neg-comment-grammar",
+      "split": "validation",
+      "category": "negative",
+      "prompt": "Fix the grammar in this code comment without changing code.",
+      "expected_activation": false,
+      "expected_intensity": "none",
+      "required_signals": ["comment-only"],
+      "rationale": "No design, implementation, or verification decision changes."
+    },
+    {
+      "id": "neg-lockfile-sort",
+      "split": "validation",
+      "category": "negative",
+      "prompt": "Use the package manager's deterministic command to normalize the lockfile ordering.",
+      "expected_activation": false,
+      "expected_intensity": "none",
+      "required_signals": ["deterministic", "normalization"],
+      "rationale": "Well-specified mechanical work."
+    }
+  ]
+}

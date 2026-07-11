@@ -1,0 +1,4 @@
+interface:
+  display_name: "Reduce Critical Unknowns"
+  short_description: "Probe decision-changing software unknowns early"
+  default_prompt: "Use $reduce-critical-unknowns to test the highest-value unknown before committing to this risky software change."
