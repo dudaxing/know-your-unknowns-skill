@@ -1,123 +1,151 @@
-# know-your-unknowns
+# Reduce Critical Unknowns for OpenAI Codex
 
-*A Claude Code skill for discovering what you don't know — before it gets expensive to fix.*
+[![Validate Skill](https://github.com/dudaxing/know-your-unknowns-skill/actions/workflows/validate-skill.yml/badge.svg)](https://github.com/dudaxing/know-your-unknowns-skill/actions/workflows/validate-skill.yml)
 
-[中文文档 / Chinese README](README.zh.md)
+An evidence-first, risk-proportional Agent Skill for finding and cheaply testing the unknowns that could change a software design, implementation, rollout, or verification strategy.
 
-Based on Thariq Shihipar's **"Know Your Unknowns"** field guide and its [companion HTML demos](https://thariqs.github.io/html-effectiveness/unknowns/). The premise: **the map is not the territory.** The "map" is everything you hand an AI agent before it starts — the prompt, the plan, the assumptions. The "territory" is the actual codebase, its history, its undocumented constraints, and the real intent behind the request. The gap between them is your unknowns, and every technique in this skill exists to close that gap deliberately instead of discovering it through rework.
+[中文说明](README.zh.md)
 
-## What you get
+> The repository name is retained for continuity. The primary Skill is now named `reduce-critical-unknowns` and targets OpenAI Codex.
 
-**11 techniques** covering the full development lifecycle, delivered as **self-contained interactive HTML artifacts** — not walls of markdown — plus a cross-cutting policy layer that applies even when no specific technique is triggered.
+The layout follows OpenAI's current [Build skills](https://learn.chatgpt.com/docs/build-skills) guidance: repository discovery under `.agents/skills`, two-field Skill frontmatter, progressive disclosure, and `agents/openai.yaml` UI metadata.
 
-### The four kinds of unknowns
+## What it changes
 
-|  | You know it | You don't know it |
-|---|---|---|
-| **Aware** | Known knowns — already in the prompt | **Known unknowns** — open questions you know you haven't resolved |
-| **Unaware** | **Unknown knowns** — taste you can't verbalize but recognize on sight | **Unknown unknowns** — what you didn't know to ask |
+The original repository organized eleven techniques around interactive page artifacts. This version keeps the useful engineering behavior and removes the fixed medium and ceremony:
 
-### The 11 techniques
+- inspect code, tests, history, configuration, schemas, and runtime behavior before asking broad questions;
+- find only unknowns that could change the next decision;
+- run one cheapest credible probe with an explicit evidence target and stop condition;
+- use conservative defaults for local, reversible choices;
+- pause only the affected branch when a high-impact, weakly evidenced choice is hard to reverse;
+- fold probe results into implementation, tests, rollout, or a compact human decision;
+- stop when the next bounded action is safe enough, not when every uncertainty is exhausted.
 
-| # | Phase | Technique | Hunts | Trigger examples |
-|---|-------|-----------|-------|------------------|
-| 1 | Pre | **Blindspot pass** — scan unfamiliar code + git history, report landmines as cards with copyable prompt fixes | Unknown unknowns | "blindspot pass", "盲区扫描" |
-| 2 | Pre | **Teach me my unknowns** — interactive explainer with vocabulary ladder and live controls | Missing vocabulary | "teach me my unknowns", "教我" |
-| 3 | Pre | **Four design directions** — same data, 3–5 incompatible design philosophies, steal/skip chips | Unknown knowns (taste) | "design directions", "出几个设计方向" |
-| 4 | Pre | **Mock before you wire** — throwaway clickable mock with fake data and A/B questions | Unknown knowns (interaction) | "mock it first", "做个原型看看" |
-| 5 | Pre | **Brainstorm the intervention** — ~10 codebase-grounded options, cheapest to most ambitious | The option space | "brainstorm interventions" |
-| 6 | Pre | **The interview** — one question at a time, ordered by architectural blast radius | Known unknowns | "interview me", "访谈我" |
-| 7 | Pre | **Point at a reference** — semantics map proving comprehension, sign-off gate before porting | Recognizable-but-indescribable behavior | "semantics map", "照着这个实现" |
-| 8 | Pre | **The tweakable plan** — sorted by likelihood-of-tweaking, mechanical work collapsed, explicit go/no-go | The decisions most likely to change | "implementation plan", "实现计划" |
-| 9 | During | **Implementation notes** — dated log of every plan deviation and conservative choice | Unknowns discovered mid-flight | "keep implementation notes", "记录实现笔记" |
-| 10 | Post | **The buy-in doc** — demo first, objections pre-answered with linked evidence, named sign-offs | The reviewers' unknowns | "pitch doc", "提案文档" |
-| 11 | Post | **Quiz me before I merge** — merge-readiness report gated by a six-question comprehension quiz | Your own unknowns about the change | "quiz me", "考考我" |
+The runtime Skill does not require page artifacts, a canonical unknowns ledger, numeric risk multiplication, fixed phase gates, or a packaged `.skill` archive.
 
-### The cross-cutting layer
+## Use it for
 
-Even when no technique is triggered, the skill provides defaults for any non-trivial task ([references/scan-and-policies.md](know-your-unknowns/references/scan-and-policies.md)):
+- unfamiliar authentication, permission, session, or migration work;
+- schema and public-contract changes across independently deployed consumers;
+- cross-language or cross-runtime semantic ports;
+- ambiguous important features whose meaning changes architecture or data boundaries;
+- implementation discoveries that invalidate a plan premise;
+- rollout, rollback, or observability decisions;
+- independent merge-readiness checks for large or high-risk diffs;
+- explicit requests for a blind-spot scan, assumption audit, focused interview, design spike, semantics map, deviation triage, or evidence review.
 
-- **The unknowns scan** — a 7-line pre-flight classification of what's known, unknown, and suspected, ending in a recommended next move.
-- **Ask-vs-decide policy** — pause for architecture/data/permissions/rollout decisions; decide-and-log (with an assumption record) for local, reversible, conventional ones.
-- **Territory inspection checklist** — flags, migrations, legacy data, reverted PRs, env splits, existing utilities, reviewer expectations.
-- **14 failure modes to avoid** — e.g. copying the most-similar file without checking it's an exception; treating dev/staging behavior as production truth; treating a passing unit test as proof of permission safety.
+Do not expand typos, formatting, local renames, or well-specified reversible fixes into a full workflow. Even when explicitly invoked, the Skill should keep those tasks to at most one material assumption and proceed.
 
-### The signature interaction: the reply builder
+## Install
 
-Every decision-seeking artifact ends with a **reply builder**: steal/skip chips, "this resonates" checkboxes, and A/B choices accumulate into a structured, copyable reply the user pastes back into chat. *Reacting is easier than imagining* — the user clicks instead of composing, and the agent receives structured input instead of prose. A working skeleton implementing these mechanics ships in [assets/artifact-skeleton.html](know-your-unknowns/assets/artifact-skeleton.html).
+### Use directly in this repository
 
-## Installation
-
-### Claude Code (personal skill)
+Clone the repository and open Codex from any directory at or below its root. Codex discovers the Skill at `.agents/skills/reduce-critical-unknowns`.
 
 ```bash
 git clone https://github.com/dudaxing/know-your-unknowns-skill.git
-cp -r know-your-unknowns-skill/know-your-unknowns ~/.claude/skills/
+cd know-your-unknowns-skill
 ```
 
-On Windows (PowerShell):
+### Copy into another repository
+
+Copy the Skill folder into that repository's `.agents/skills/` directory:
 
 ```powershell
-git clone https://github.com/dudaxing/know-your-unknowns-skill.git
-Copy-Item -Recurse know-your-unknowns-skill/know-your-unknowns "$env:USERPROFILE\.claude\skills\"
+$source = ".agents\skills\reduce-critical-unknowns"
+$target = "C:\path\to\your-repo\.agents\skills\reduce-critical-unknowns"
+New-Item -ItemType Directory -Force -Path (Split-Path $target) | Out-Null
+Copy-Item -Recurse -Force $source $target
 ```
 
-New sessions pick it up automatically. Verify by asking Claude Code: *"Do a blindspot pass on the auth module."*
-
-### Packaged `.skill` file
-
-[dist/know-your-unknowns.skill](dist/know-your-unknowns.skill) is the validated, packaged distribution (a zip with a `.skill` extension) for platforms that accept skill uploads.
-
-## Usage examples
-
-```text
-I've never touched this codebase's payment module. Do a blindspot pass before I prompt you to add a refund flow.
+```bash
+mkdir -p /path/to/your-repo/.agents/skills
+cp -R .agents/skills/reduce-critical-unknowns /path/to/your-repo/.agents/skills/
 ```
 
-```text
-Interview me one question at a time about the export feature. Prioritize questions where my answer would change the architecture.
-```
+### Install for the current user
+
+Copy the same folder to `$HOME/.agents/skills/reduce-critical-unknowns`.
+
+## Invoke
+
+Explicit examples:
 
 ```text
-This Rust crate has exactly the backoff behavior we need. Build a semantics map first — I'll reply "semantics confirmed" before you port anything.
-```
-
-```text
-出几个设计方向让我挑，同一份数据，风格差异要大，带 steal/skip 选项。
+$reduce-critical-unknowns Add rotating sessions to this legacy auth module. Test the migration and rollback assumptions before enabling writes.
 ```
 
 ```text
-Create a merge-readiness report for this diff with a quiz I must pass before merging.
+$reduce-critical-unknowns Port this Rust retry controller to TypeScript while preserving caller-visible timing, error, retry, and cancellation semantics.
 ```
 
-Techniques chain naturally — a typical full-feature flow: blindspot pass → interview → tweakable plan → implementation notes → buy-in doc → merge quiz. But this is **a toolbox, not a pipeline**: the skill picks only what the dominant unknowns justify.
+```text
+$reduce-critical-unknowns Check this large diff's merge readiness by mapping acceptance criteria, rollback, observability, and failure paths to evidence.
+```
+
+Codex may also invoke the Skill implicitly when the task matches its frontmatter description.
+
+## Operating model
+
+| Situation | Expected behavior |
+|---|---|
+| Clear, local, reversible fix | Inspect locally, note at most one material assumption, implement, and run the focused verification. |
+| Important but repository-answerable unknown | Inspect the strongest evidence and run one focused probe before asking the user. |
+| Human-owned, high-impact, hard-to-reverse choice | Present evidence and a few materially different options; pause only the affected branch. |
+| Plan contradicted during implementation | Record premise → evidence → impact → conservative action or escalation. |
+| Large or risky diff | Map acceptance criteria to evidence and inspect failure paths, rollback, observability, and the maintainer mental model. |
+| Repository unavailable | State the evidence gap, keep claims as hypotheses, and return the first discriminating probe. |
+
+Detailed probe selection and domain-specific risk sweeps load only when needed from the two references.
 
 ## Repository structure
 
-```
-know-your-unknowns/            The skill (copy this directory to ~/.claude/skills/)
-├── SKILL.md                   Core: principles, technique selection table, workflow (~120 lines)
-├── references/                Loaded on demand, one file per technique
-│   ├── scan-and-policies.md   Cross-cutting: unknowns scan, ask-vs-decide, failure modes
-│   ├── artifact-patterns.md   HTML artifact construction rules + reply-builder spec
-│   ├── blindspot-pass.md      … through …
-│   └── merge-quiz.md          (11 technique files total)
-└── assets/
-    └── artifact-skeleton.html Reusable single-file skeleton: chips, checkboxes, reply builder
-dist/
-└── know-your-unknowns.skill   Packaged distribution
+```text
+.agents/skills/reduce-critical-unknowns/
+├── SKILL.md
+├── agents/
+│   └── openai.yaml
+└── references/
+    ├── probe-playbook.md
+    └── risk-patterns.md
+
+evals/reduce-critical-unknowns/
+├── trigger-cases.json
+├── behavior-scenarios.md
+├── forward-test-results.md
+├── results.md
+└── run_static_checks.py
 ```
 
-The layout follows **progressive disclosure**: only the ~100-word description sits in context permanently; the SKILL.md body loads when the skill triggers; each technique's reference file loads only when that technique runs. Using one technique never pays the context cost of the other ten.
+The runtime Skill has four files. Evals, validation records, and repository documentation remain outside the Skill to preserve progressive disclosure.
+
+## Validate
+
+```bash
+python -m pip install PyYAML==6.0.3
+python -m py_compile evals/reduce-critical-unknowns/run_static_checks.py
+python evals/reduce-critical-unknowns/run_static_checks.py
+```
+
+Also run the `quick_validate.py` bundled with your current Codex `$skill-creator` against `.agents/skills/reduce-critical-unknowns`.
+
+Current baseline:
+
+- 25 labeled trigger prompts: positive, explicit, immediate, near-negative, and negative;
+- 8 behavior scenarios with 54 observable assertions;
+- 54/54 assertions passed in explicit independent forward-tests;
+- real implicit trigger rate remains unmeasured because the test surface did not expose Skill-load traces.
+
+See [validation results](evals/reduce-critical-unknowns/results.md) and [forward-test results](evals/reduce-critical-unknowns/forward-test-results.md).
+
+## Migrating from the previous Skill
+
+- The invocation name changes from `$know-your-unknowns` to `$reduce-critical-unknowns`.
+- Remove an installed copy of the old Skill before installing this one; keeping both may create overlapping triggers.
+- The old `dist/know-your-unknowns.skill` archive is removed. The repository-native `.agents/skills/` folder is the source of truth.
+- Historical technique names still map to the smallest matching probe, but they no longer force the old output medium, item count, or gate.
 
 ## Design lineage
 
-This skill synthesizes three sources, keeping the best of each:
-
-1. **[Thariq's companion demos](https://thariqs.github.io/html-effectiveness/unknowns/)** (primary) — all 11 techniques with their full interactive depth: the seven blindspot categories, the semantics map's "load-bearing detail" annotations, the reply-builder mechanics.
-2. **[GreatMark/fable-field-guide-skills](https://github.com/GreatMark/fable-field-guide-skills)** — behavioral rules (anchor on the user's starting point first; recommend an option in every interview question; push one design direction beyond stated taste) and artifact hygiene (scratch directories, `.git/info/exclude`, never committing scaffolding).
-3. **An `unknowns-driven-development` variant** — the cross-cutting policy layer: the default unknowns scan, the ask-vs-decide policy, and the failure-modes list.
-
-## Credits
-
-Methodology by [Thariq Shihipar](https://thariqs.github.io/) (Anthropic), from the "Know Your Unknowns" field guide and the HTML-effectiveness companion demos. This repository is an independent skill implementation for AI coding agents.
+The methodology is informed by Thariq Shihipar's [Know Your Unknowns field guide and companion demonstrations](https://thariqs.github.io/html-effectiveness/unknowns/) and by the previous implementation in this repository. This rewrite re-synthesizes the engineering behavior for OpenAI Codex instead of copying the previous artifact layer.
