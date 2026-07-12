@@ -66,15 +66,24 @@ New sessions pick it up automatically. Verify by asking Claude Code: *"Do a blin
 
 ### Cursor
 
-Cursor loads personal skills from **`~/.claude/skills/`** (same path as Claude Code). To install from this repo:
+Prefer **one** location. Native Cursor skill roots include project/user **`.cursor/skills/`** (and Codex-style **`.agents/skills/`**). Compat: **`~/.claude/skills/`** may also load depending on Cursor version / third-party settings — not the only path.
+
+Example (project-native):
 
 ```powershell
-Copy-Item -Recurse D:\Coding\know-your-unkowns\know-your-unknowns "$env:USERPROFILE\.claude\skills\"
+New-Item -ItemType Directory -Force "$PWD\.cursor\skills" | Out-Null
+Copy-Item -Recurse .\know-your-unknowns "$PWD\.cursor\skills\"
 ```
 
-Do **not** duplicate into `~/.cursor/skills/`. Open HTML artifacts via `file://` in a browser; scratch-directory and `.git/info/exclude` hygiene apply in Cursor too.
+Example (compat user install):
 
-Verify in Cursor Agent: *"Do a blindspot pass on the auth module"* or *"Interview me about the export feature."*
+```powershell
+Copy-Item -Recurse .\know-your-unknowns "$env:USERPROFILE\.claude\skills\"
+```
+
+After install/update, open a **new Agent chat**. Open HTML artifacts via `file://`; scratch-directory and `.git/info/exclude` hygiene still apply.
+
+Verify: *"Do a blindspot pass on the auth module"* or *"Interview me about the export feature."*
 
 ### Packaged `.skill` file
 
@@ -87,7 +96,7 @@ Verify in Cursor Agent: *"Do a blindspot pass on the auth module"* or *"Intervie
 1. **State the task** — If no technique is named, the agent runs a compact **Unknowns scan** (four unknown types + recommended next move + **copy-paste trigger phrase**).
 2. **Pick the technique** — See the table above; honor explicit triggers ("interview me", "blindspot pass").
 3. **React via artifacts** — Comparisons, layouts, and quizzes ship as single-file HTML; use the reply builder, then **paste the structured reply back** into chat.
-4. **Fold forward** — The agent parses labeled fields and updates plans/decisions; it does **not** treat replies as background prose. Gates: `semantics confirmed`, plan **go**, perfect quiz score.
+4. **Fold forward** — The agent parses labeled fields and updates plans/decisions; it does **not** treat replies as background prose. Gates: `semantics confirmed` / structured `Correction:`, plan **go**, agent-scored perfect `Qn:` quiz (never trust a pasted `Quiz score:`).
 5. **Fresh session for implementation** — After plan approval, **start a new Agent session** with only the handoff bundle (plan, decisions, mocks/maps, `implementation-notes.md` path). See SKILL.md.
 6. **During / after** — Implementation notes for deviations; buy-in doc and merge quiz when shipping.
 
@@ -138,7 +147,7 @@ Techniques chain naturally — a typical full-feature flow: blindspot pass → i
 ## Repository structure
 
 ```
-know-your-unknowns/            The skill (copy this directory to ~/.claude/skills/)
+know-your-unknowns/            The skill (install into one host skill root, e.g. .cursor/skills/ or ~/.claude/skills/)
 ├── SKILL.md                   Core: principles, technique selection table, workflow (~120 lines)
 ├── references/                Loaded on demand, one file per technique
 │   ├── scan-and-policies.md   Cross-cutting: unknowns scan, ask-vs-decide, failure modes

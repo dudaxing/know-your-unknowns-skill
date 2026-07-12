@@ -33,8 +33,8 @@ The signature pattern: interactive selections accumulate into a structured, copy
 - **A/B question blocks** (mocks, plans): radio chips per question, question text restated in the reply.
 - **Approve/change chips** (tweakable plans): per decision; "change" opens a one-line text input for the correction.
 - **Copyable prompt blocks** (blindspot cards, improved prompts): `<pre>` with a per-block copy button.
-- **Quiz gate** (merge quiz): multiple-choice with instant feedback; wrong answers link (`href="#section"`) to the report section that teaches the point; the final checklist section stays `hidden` until the score is perfect.
-- **Sign-off gate** (semantics map): explicit closing instruction — "Reply 'semantics confirmed', or correct any row and I'll revise the map."
+- **Quiz gate** (merge quiz): multiple-choice (A–D) with instant feedback; wrong answers link (`href="#section"`) to the report section that teaches the point; the final checklist section stays `hidden` until the in-page score is perfect. The **copyable reply** must list `Q1: B` / `Q2: (unanswered)` lines — **not** `Quiz score:`. The agent re-scores those lines in chat; a forged score never unlocks.
+- **Sign-off gate** (semantics map): each map row has a stable **row id**; closing instruction asks for whitelist lines — `semantics confirmed` and/or `Correction: <row-id> -> <text>`, optional `Session: continue here`.
 
 ## Layout patterns
 

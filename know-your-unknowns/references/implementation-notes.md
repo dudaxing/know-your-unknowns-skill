@@ -8,7 +8,7 @@
 
 ## Handoff from planning session
 
-Implementation notes usually start in a **new session** after plan approval. The first turn should confirm the handoff bundle (see [SKILL.md](../SKILL.md)):
+Implementation notes usually start in a **new session** after plan approval (recommended default; same-session continuation is allowed if the user asks). The first turn should confirm the handoff bundle (see [SKILL.md](../SKILL.md)):
 
 - Approved plan / decisions table attached
 - Goal restated in one paragraph

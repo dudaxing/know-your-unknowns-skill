@@ -14,28 +14,41 @@ Open with **summary chips** — one glanceable line: effort, files touched, migr
 
 ## Response mechanism
 
-Per-decision approve/change chips assembling into a copyable reply, ending in an **explicit go/no-go choice**: approve and start, adjust first, or reject. Also include **"tweak these first"** — the 2–4 one-line overrides the user is most likely to send ("switch storage to render-on-demand", "cut the CSV format"), each copyable as-is. Do not begin implementation in the same turn as presenting the plan — the pause is the point.
+Per-decision approve/change chips assembling into a copyable reply, ending in an **explicit go/no-go choice**: **approve → prepare handoff** (recommend a fresh session), adjust first, or reject. Optionally include a separate chip/line the user can copy: **continue here / implement in this session**. Also include **"tweak these first"** — the 2–4 one-line overrides the user is most likely to send ("switch storage to render-on-demand", "cut the CSV format"), each copyable as-is. Do not begin implementation in the same turn as presenting the plan — the pause is the point.
 
 ## Handoff bundle (after go)
 
-When the user approves, compile a **handoff bundle** for a fresh implementation session (see [SKILL.md](../SKILL.md) — Implementation session handoff):
+When the user approves, compile a **handoff bundle** and **recommend** a fresh implementation session (see [SKILL.md](../SKILL.md) — Implementation session handoff):
 
 - Path to this plan artifact
 - Folded decisions from the reply builder (restated in chat or as a short `decisions.md` in scratch)
 - Any linked mock, semantics map, or improved prompt from earlier techniques
 - Empty or continued `implementation-notes.md` path
 
-Tell the user to start a **new session** and attach these files rather than continuing the planning thread.
+Default: tell the user to start a **new session** and attach these files. If they explicitly ask to continue in the **same session**, create/confirm the notes log first, then implement — do not refuse solely because the session was not refreshed.
 
 ## Optional: plan gate verification
 
-If the project uses **codex-verify** plan gates (`.codex-verify/plan-approved`, Cursor/Claude hooks), suggest running plan review **before** source edits:
+If the project already has plan-gate hooks **and** `~/.claude/skills/codex-verify/scripts/verify.sh` is present and runnable in the current shell, suggest running plan review **before** source edits. Export approved plan sections (decisions + sequencing + **allowed path prefixes**) to a markdown file under `.codex-verify/plans/` first (scaffolding — prefer `.git/info/exclude`; do not commit unless the project wants gate plans in git).
+
+`VERIFY_ALLOWED_PATHS` must be set in the **environment of the verify command** (comma-separated path prefixes). It only gates Edit/Write **after** plan PASS — it is not a substitute for the plan text.
+
+**Preferred (Git Bash) — stdin redirect preserves UTF-8 bytes; avoid `$(cat …)`:**
 
 ```bash
-bash ~/.claude/skills/codex-verify/scripts/verify.sh plan "$(cat path/to/plan-export.md)"
+export VERIFY_ALLOWED_PATHS="know-your-unknowns/,README.md,dist/"
+bash "$HOME/.claude/skills/codex-verify/scripts/verify.sh" plan < .codex-verify/plans/export.md
 ```
 
-Export the approved plan sections (decisions + sequencing + allowed paths) to a markdown file under `.codex-verify/plans/` first. PASS writes the marker and unlocks gated edits; this skill does not require codex-verify — mention it only when hooks or `.codex-verify/` already exist in the repo.
+**PowerShell 5.1 — do not pipe `Get-Content` into bash** (corrupts Unicode such as `—` / `→` / 中文). Run the redirect **inside** Git Bash:
+
+```powershell
+& bash -lc 'export VERIFY_ALLOWED_PATHS="know-your-unknowns/,README.md,dist/"; bash "$HOME/.claude/skills/codex-verify/scripts/verify.sh" plan < .codex-verify/plans/export.md'
+```
+
+(`bash` must be on PATH, e.g. Git Bash. This skill documents Git Bash on Windows — not WSL path translation.)
+
+If hooks/`.codex-verify/` exist but the verify CLI is missing or not runnable, say so and skip the fixed command. PASS writes the marker and unlocks gated edits; this skill does not require codex-verify.
 
 ## Rules
 

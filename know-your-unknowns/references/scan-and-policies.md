@@ -15,7 +15,7 @@ When a task is non-trivial but no full technique is warranted, run a compact sca
 - Likely unknown unknowns:
 - Evidence inspected so far:
 - Recommended next move: (implement / prototype / interview / blindspot pass / investigate)
-- Suggested trigger phrase: (one copy-paste sentence to run the recommended technique — English; add 中文 when helpful)
+- Suggested trigger phrase: (one copy-paste sentence to run the recommended technique — English; add 中文 when helpful. If next move is **implement**, write `n/a — proceed after logging assumptions` instead of a fake trigger.)
 ```
 
 Example trigger phrases by recommended move:
@@ -26,7 +26,8 @@ Example trigger phrases by recommended move:
 | interview | `Interview me one question at a time about [feature]; prioritize architecture-changing answers.` | `就 [功能] 访谈我，一次一题，优先问会改变架构的问题。` |
 | prototype / design directions | `Make an HTML page with 4 wildly different design directions for [screen] so I can react.` | `给 [界面] 出 4 个差异很大的设计方向 HTML，让我反应式选择。` |
 | tweakable plan | `Write a tweakable implementation plan in HTML — decisions I'm likely to change first.` | `写一份可调实现计划 HTML，把最可能改的决策放在前面。` |
-| implement | `(no technique — proceed after logging assumptions)` | `（无需额外技巧 — 记录假设后直接实现）` |
+| investigate | `Investigate [area] in the territory and report findings before we decide the next technique.` | `先调查疆域里的 [区域] 并汇报，再决定下一招。` |
+| implement | `n/a — proceed after logging assumptions` | `无需触发句 — 记录假设后直接实现` |
 
 For tiny safe edits, skip even this: log any assumption and proceed.
 

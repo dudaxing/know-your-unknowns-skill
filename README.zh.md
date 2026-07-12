@@ -66,15 +66,24 @@ Copy-Item -Recurse know-your-unknowns-skill/know-your-unknowns "$env:USERPROFILE
 
 ### Cursor
 
-Cursor 会从 **`~/.claude/skills/`** 加载个人 skill（与 Claude Code 共用目录）。在本仓库开发时可直接使用已存在的 `know-your-unknowns/` 目录；安装到其他项目时：
+选 **一个** 安装位置即可。Cursor 原生 skill 根包括项目/用户级 **`.cursor/skills/`**（以及 Codex 风格的 **`.agents/skills/`**）。兼容路径：**`~/.claude/skills/`** 是否加载取决于 Cursor 版本与第三方/兼容设置——不要再把它写成唯一位置。
+
+项目级原生示例：
 
 ```powershell
-Copy-Item -Recurse D:\Coding\know-your-unkowns\know-your-unknowns "$env:USERPROFILE\.claude\skills\"
+New-Item -ItemType Directory -Force "$PWD\.cursor\skills" | Out-Null
+Copy-Item -Recurse .\know-your-unknowns "$PWD\.cursor\skills\"
 ```
 
-**不要**再复制一份到 `~/.cursor/skills/`。HTML 工件用浏览器打开 `file://` 路径即可；scratch 目录与 `.git/info/exclude` 规则在 Cursor 中同样适用。
+兼容用户目录示例：
 
-验证方式：在 Cursor Agent 中说 *"对 auth 模块做一次盲区扫描"* 或 *"就导出功能访谈我"*。
+```powershell
+Copy-Item -Recurse .\know-your-unknowns "$env:USERPROFILE\.claude\skills\"
+```
+
+安装或更新后请 **新开 Agent 聊天**。HTML 工件用浏览器打开 `file://`；scratch 与 `.git/info/exclude` 规则仍适用。
+
+验证：*"对 auth 模块做一次盲区扫描"* 或 *"就导出功能访谈我"*。
 
 ### 打包版 `.skill` 文件
 
@@ -87,7 +96,7 @@ Copy-Item -Recurse D:\Coding\know-your-unkowns\know-your-unknowns "$env:USERPROF
 1. **说清任务** — 若未指定技巧，agent 会先跑 compact **Unknowns scan**（四类未知 + 建议下一招 + **可复制触发句**）。
 2. **选对技巧** — 见上表；显式触发优先（如「访谈我」「盲区扫描」）。
 3. **反应式工件** — 比较/布局/测验类产出为单文件 HTML；在页面底部用 reply builder 复制结构化回复，**粘贴回对话**。
-4. **折入下一轮** — agent 按 Fold-forward 协议解析回复、更新计划/决策，**不会当散文忽略**；门禁词：`semantics confirmed`、计划 **go**、测验满分。
+4. **折入下一轮** — agent 按 Fold-forward 协议解析回复、更新计划/决策，**不会当散文忽略**；门禁：`semantics confirmed` / 结构化 `Correction:`、计划 **go**、由 agent 复评的 `Qn:` 满分（不信任粘贴的 `Quiz score:`）。
 5. **新会话实现** — 计划通过后 **新开 Agent 会话**，只附带计划、决策表、mock/语义地图与 `implementation-notes.md` 路径（见 SKILL.md handoff）。
 6. **实现中** — 用实现笔记记录偏差；**实现后** — buy-in 文档 / 合并前测验按需选用。
 
@@ -138,7 +147,7 @@ Copy-Item -Recurse D:\Coding\know-your-unkowns\know-your-unknowns "$env:USERPROF
 ## 仓库结构
 
 ```
-know-your-unknowns/            skill 本体（把这个目录复制到 ~/.claude/skills/）
+know-your-unknowns/            skill 本体（安装到某一个宿主 skill 根，如 .cursor/skills/ 或 ~/.claude/skills/）
 ├── SKILL.md                   核心：原则、技术选型表、工作流（约 120 行）
 ├── references/                按需加载，每项技术一个文件
 │   ├── scan-and-policies.md   横切：unknowns scan、ask-vs-decide、失败模式
