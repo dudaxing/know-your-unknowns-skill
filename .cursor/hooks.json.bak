@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "hooks": {
+    "preToolUse": [
+      {
+        "command": "D:/ProgramData/Anaconda3/python.exe .cursor/hooks/plan_gate_cursor.py",
+        "matcher": "Write|StrReplace|Delete|EditNotebook",
+        "failClosed": false,
+        "timeout": 30
+      }
+    ],
+    "beforeShellExecution": [
+      {
+        "command": "D:/ProgramData/Anaconda3/python.exe .cursor/hooks/bash_gate_cursor.py",
+        "failClosed": false,
+        "timeout": 30
+      }
+    ]
+  }
+}
