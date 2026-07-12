@@ -212,6 +212,25 @@ Q99: A
 
 ---
 
+## 12b. Merge quiz — unanswered is not a perfect score
+
+**User says** (fixture Q1–Q5; three correct, two unanswered):
+
+```text
+Q1: B
+Q2: A
+Q3: C
+Q4: (unanswered)
+Q5: (unanswered)
+```
+
+**Expected behavior:**
+
+- Agent re-scores; treats `(unanswered)` as incomplete
+- Does **not** unlock (perfect score requires every question answered correctly)
+
+---
+
 ## 13. Reference-port — conflicting Corrections void confirm
 
 **User says** (map already confirmed):
