@@ -1,0 +1,36 @@
+# Development scaffolding — must never ship with the skill.
+#
+# Note on scope: the skill itself tells agents to exclude session artifacts via
+# `git rev-parse --git-path info/exclude`, precisely so an agent never edits a
+# tracked file. This .gitignore is the maintainer-side counterpart — a deliberate,
+# shared policy about what may enter the distribution — and is meant to be committed.
+#
+# Patterns are kept narrow on purpose: a blanket `.claude/` or `.cursor/` would
+# silently swallow a future maintainer's intentional shared config.
+
+# Independent-review tool state, one-off plan exports and run scripts
+.codex-verify/
+
+# Host hook experiments; local-only settings overrides
+.cursor/hooks/
+.cursor/hooks.json
+.claude/settings.local.json
+
+# Test installs of this skill into a host root inside the repo
+.cursor/skills/
+.claude/skills/
+.agents/skills/
+
+# Disabled / backup copies of any config
+*.off
+*.bak
+
+# Discovery artifacts this skill's own techniques produce
+design-directions/
+unknowns-artifacts/
+change-report.html
+implementation-notes.md
+
+# Python
+__pycache__/
+*.py[cod]
