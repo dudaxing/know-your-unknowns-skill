@@ -9,7 +9,7 @@
 ## Workflow
 
 1. **Determine scope:** the current session's changes by default, or the diff/branch/PR the user points at. **Read not just the touched code but the existing code paths it integrates with** — that's where the surprising behavior lives.
-2. **Write the report** as one self-contained HTML file (e.g. `change-report.html` at project root). Keep it outside the changeset: don't commit it; add it to `.git/info/exclude` in a git repo.
+2. **Write the report** as one self-contained HTML file (e.g. `change-report.html` at project root). Keep it outside the changeset: don't commit it; add it to the file reported by `git rev-parse --git-path info/exclude` in a git repo.
 3. **Grade in chat** if the user answers there; explain misses with exact file/line references.
 
 ## Artifact structure

@@ -1,9 +1,11 @@
 ---
 name: know-your-unknowns
-description: Toolkit of 11 techniques for surfacing unknowns before, during, and after software implementation, delivered as self-contained interactive HTML artifacts (based on Thariq Shihipar's "Know Your Unknowns" field guide). Use when starting work in an unfamiliar module or codebase, learning an unfamiliar domain, choosing between UI/design directions, brainstorming solutions to a product problem, clarifying ambiguous requirements, porting code from a reference implementation, writing an implementation plan, running a long build session, pitching a finished change for approval, or verifying understanding before merging a large diff. Triggers include - blindspot pass, unknown unknowns, teach me, design directions, mock it first, brainstorm interventions, interview me, semantics map, reference port, tweakable plan, implementation notes, buy-in doc, pitch doc, merge quiz, quiz me, 盲区扫描, 未知项, 教我, 需求澄清, 访谈我, 问我问题, 出几个设计方向, 做个原型看看, 照着这个实现, 实现计划, 写个实现方案, 记录实现笔记, 提案文档, 打包给评审, 合并前检查, 考考我.
+description: Toolkit of 11 techniques for surfacing unknowns before, during, and after software implementation, delivered as self-contained interactive HTML artifacts or as plain chat/markdown — whichever reduces unknowns fastest. Use when starting work in an unfamiliar module or codebase, learning an unfamiliar domain, choosing between UI/design directions, brainstorming solutions to a product problem, clarifying ambiguous requirements, porting code from a reference implementation, writing an implementation plan, running a long build session, pitching a finished change for approval, or verifying understanding before merging a large diff. Triggers include - blindspot pass, unknown unknowns, teach me, design directions, mock it first, brainstorm interventions, interview me, semantics map, reference port, tweakable plan, implementation notes, buy-in doc, pitch doc, merge quiz, quiz me, 盲区扫描, 未知项, 教我, 需求澄清, 访谈我, 问我问题, 出几个设计方向, 做个原型看看, 照着这个实现, 实现计划, 写个实现方案, 记录实现笔记, 提案文档, 打包给评审, 合并前检查, 考考我.
 ---
 
 # Know Your Unknowns
+
+Based on Thariq Shihipar's "Know Your Unknowns" field guide and its companion HTML demos.
 
 The map is not the territory. The "map" is everything handed to an agent before it starts working — the prompt, the plan, the assumptions. The "territory" is the actual codebase, its history, its undocumented constraints, and the real intent behind the request. The gap between map and territory is the unknowns. Every explainer, brainstorm, interview, prototype, and reference is a cheap way to find out what you didn't know — before it gets expensive to fix.
 
@@ -24,15 +26,23 @@ Diagnose which kind dominates, then pick the technique that hunts it (table belo
 
 3. **Pick the medium that reduces unknowns fastest.** Markdown/chat for short scans, simple plans, and direct answers; a self-contained interactive HTML artifact when layout, comparison, interaction, or quizzes reveal unknowns better than prose — spatial information flattens badly into linear text, and interactivity trades a document the user would skim for one they will actually read. Never produce decorative HTML that reveals nothing prose wouldn't. See [references/artifact-patterns.md](references/artifact-patterns.md) before building any artifact.
 
-4. **Reacting is easier than imagining.** Users often cannot articulate what they want, but they recognize it instantly when shown. Generate concrete options and let the user react. Every artifact must end with a low-effort response mechanism — steal/skip chips, "this resonates" checkboxes, A/B choices, a copyable assembled reply — so reactions come back as a structured message with minimal typing.
+4. **Reacting is easier than imagining.** Users often cannot articulate what they want, but they recognize it instantly when shown. Generate concrete options and let the user react. Every artifact **that asks the user to decide something** must end with a low-effort response mechanism — steal/skip chips, "this resonates" checkboxes, A/B choices, a copyable assembled reply — so reactions come back as a structured message with minimal typing. Purely explanatory output (e.g. the teach-me explainer) needs no reply builder.
 
 5. **Gate irreversible steps on confirmed understanding.** Require explicit sign-off on a semantics map before porting code; require a passed quiz before merging a risky diff. Understanding must be demonstrated, not assumed.
 
 6. **Ground everything in the actual territory.** Blindspots come from reading the real code and git history, not from generic best practices. Brainstormed interventions cite real files, dormant flags, and unwired backend data. When the territory turns out to be simple and there is little to report, say so — never fabricate findings to fill a format.
 
-7. **Discovery artifacts are scaffolding — keep them out of the changeset.** Mocks, design directions, reports, and note files live in a scratch directory, never inside the app's source tree, and are not committed unless the user asks. In a git repo, add them to `.git/info/exclude` (not `.gitignore`, which would itself dirty the diff).
+7. **Discovery artifacts are scaffolding — keep them out of the changeset.** Mocks, design directions, and reports live in a scratch directory, never inside the app's source tree. The implementation-notes log is the one exception: it sits at the project root by convention (see [implementation-notes.md](references/implementation-notes.md)) but is still scaffolding. Neither is committed unless the user asks. In a git repo, exclude them via the repo's info/exclude file — resolve its real path with `git rev-parse --git-path info/exclude` rather than hardcoding `.git/info/exclude`, which is wrong in worktrees and submodules where `.git` is a file. Do not use `.gitignore`, which would itself dirty the diff. If the path can't be resolved or the environment is read-only, say so and fall back to chat output rather than writing files.
 
-8. **Host note (Cursor / Claude Code / Codex).** Pick **one** install location per host — do not maintain divergent copies. Native discovery: project or user **`.cursor/skills/`** and **`.agents/skills/`** (Cursor / Codex). Compat: **`~/.claude/skills/`** (and project `.claude/skills/`) may also load depending on host version and settings (e.g. Cursor third-party / Claude-compat options) — treat as compatibility, not the only path. After installing or updating, start a **new chat** so the skill is picked up. HTML artifacts open via `file://` or the system browser; scratch paths and `.git/info/exclude` hygiene apply across hosts.
+8. **Host note.** Pick **one** install location per host — do not maintain divergent copies. Each host's native skill roots:
+
+   | Host | Native roots (user / project) |
+   |---|---|
+   | Claude Code | `~/.claude/skills/` · `.claude/skills/` |
+   | Cursor | `~/.cursor/skills/` · `.cursor/skills/` |
+   | Codex | `~/.agents/skills/` · `.agents/skills/` |
+
+   These are native paths for their own host, not compatibility shims. A host may additionally load another host's root depending on version and settings — treat that as a bonus, never as the documented install path. After installing or updating, starting a **new chat** is the safe default; Claude Code picks up edits inside an already-known skills directory in-session, but a skills root that did not exist when the session started needs a restart. HTML artifacts open via `file://` or the system browser; scratch-path and info/exclude hygiene (principle 7) applies across hosts.
 
 ## Choosing a technique
 
@@ -64,7 +74,7 @@ Read the linked reference file for the full workflow before executing.
 1. **Diagnose** the phase (pre / during / post) and the dominant unknown type; pick the technique from the table.
 2. **Read the reference file** for the chosen technique — it specifies the investigation, artifact structure, and response mechanism.
 3. **Anchor, then investigate the territory.** Read the actual code, git history, feature flags, and configs. If the demo-style content can't be grounded in the real project, say so and scope the investigation with the user.
-4. **Build the artifact** as one self-contained `.html` file per [artifact-patterns.md](references/artifact-patterns.md), starting from [assets/artifact-skeleton.html](assets/artifact-skeleton.html).
+4. **Produce the output in the medium the chosen technique calls for** (principle 3) — chat or markdown for the unknowns scan, the interview, and the implementation-notes log; a self-contained `.html` artifact where its reference file calls for one. When building an artifact, follow [artifact-patterns.md](references/artifact-patterns.md) and start from [assets/artifact-skeleton.html](assets/artifact-skeleton.html); default to a single file, except design directions, which may split into one file per direction plus an index.
 5. **Deliver and collect.** Tell the user the file path, what to do, and what reply to send back. The reply is structured input for the next step.
 6. **Fold the answers forward** per the protocol below. Techniques chain — a typical full-feature flow: blindspot pass → interview → tweakable plan → implementation notes → buy-in doc → merge quiz. These are tools, not a mandatory pipeline; run only what the dominant unknowns justify, and when the user has already made a decision an artifact would re-litigate, skip it and proceed.
 

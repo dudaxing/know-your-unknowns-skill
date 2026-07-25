@@ -29,7 +29,7 @@ When directions are heavy full-page experiences that cramp side-by-side, split i
 
 - Fake data must be realistic — never lorem ipsum; taste reactions depend on plausible content.
 - Prototypes live in a scratch directory (e.g. `./design-directions/`), never inside the app's source tree. Do not modify application code, add dependencies, or wire up backends.
-- Do not commit prototypes; in a git repo, add the directory to `.git/info/exclude`.
+- Do not commit prototypes; in a git repo, add the directory to the file reported by `git rev-parse --git-path info/exclude`.
 
 ## Follow-up
 

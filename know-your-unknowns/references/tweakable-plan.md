@@ -29,7 +29,7 @@ Default: tell the user to start a **new session** and attach these files. If the
 
 ## Optional: plan gate verification
 
-If the project already has plan-gate hooks **and** `~/.claude/skills/codex-verify/scripts/verify.sh` is present and runnable in the current shell, suggest running plan review **before** source edits. Export approved plan sections (decisions + sequencing + **allowed path prefixes**) to a markdown file under `.codex-verify/plans/` first (scaffolding — prefer `.git/info/exclude`; do not commit unless the project wants gate plans in git).
+If the project already has plan-gate hooks **and** `~/.claude/skills/codex-verify/scripts/verify.sh` is present and runnable in the current shell, suggest running plan review **before** source edits. Export approved plan sections (decisions + sequencing + **allowed path prefixes**) to a markdown file under `.codex-verify/plans/` first (scaffolding — prefer excluding via `git rev-parse --git-path info/exclude`; do not commit unless the project wants gate plans in git).
 
 `VERIFY_ALLOWED_PATHS` must be set in the **environment of the verify command** (comma-separated path prefixes). It only gates Edit/Write **after** plan PASS — it is not a substitute for the plan text.
 

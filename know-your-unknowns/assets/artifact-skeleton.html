@@ -152,12 +152,23 @@
     document.getElementById('reply').value = lines.join('\n');
   }
 
+  // Clipboard access is denied under some file:// and permission policies — always
+  // provide a visible fallback so the button can never fail silently.
   function copyText(text, btn) {
-    navigator.clipboard.writeText(text).then(() => {
-      btn.classList.add('done');
-      const old = btn.textContent; btn.textContent = 'copied ✓';
-      setTimeout(() => { btn.classList.remove('done'); btn.textContent = old; }, 1200);
-    });
+    const flash = (label, ok) => {
+      btn.classList.toggle('done', ok);
+      const old = btn.dataset.label || btn.textContent;
+      btn.dataset.label = old;
+      btn.textContent = label;
+      setTimeout(() => { btn.classList.remove('done'); btn.textContent = old; }, 1800);
+    };
+    const manual = () => {
+      const ta = document.getElementById('reply');
+      if (ta && ta.value === text) { ta.focus(); ta.select(); }
+      flash('press Ctrl+C', false);
+    };
+    if (!navigator.clipboard) { manual(); return; }
+    navigator.clipboard.writeText(text).then(() => flash('copied ✓', true), manual);
   }
 
   buildReply();

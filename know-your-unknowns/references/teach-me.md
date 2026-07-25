@@ -19,4 +19,4 @@
 
 ## Response mechanism
 
-None required — the deliverable is the user's upgraded vocabulary. Optionally end with "which of these do you want to go deeper on?" chips.
+None required — this is the explanatory case principle 4 exempts, since the artifact asks the user to decide nothing; the deliverable is their upgraded vocabulary. Optionally end with "which of these do you want to go deeper on?" chips.

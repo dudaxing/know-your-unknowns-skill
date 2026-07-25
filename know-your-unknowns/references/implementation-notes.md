@@ -19,8 +19,8 @@ If the user continues in the same session without handoff, still create the log 
 
 ## Mechanics
 
-- Create `implementation-notes.md` at the project root (or the user's preferred path). Append dated sections for new tasks rather than overwriting.
-- The file is scaffolding, not deliverable: don't commit it unless asked; in a git repo add it to `.git/info/exclude`. **The chat digest at session end is the durable handoff.**
+- Create `implementation-notes.md` at the project root (or the user's preferred path). Append dated sections for new tasks rather than overwriting. This log is markdown, not an HTML artifact, and the project root is the deliberate exception to the scratch-directory rule in principle 7 — a running log is only useful where the person building can see it.
+- The file is scaffolding, not deliverable: don't commit it unless asked; in a git repo add it to the file reported by `git rev-parse --git-path info/exclude`. If the filesystem is read-only or the path can't be resolved, keep the log in chat and say so. **The chat digest at session end is the durable handoff.**
 - Update incrementally — one to three lines per entry, logged the moment the surprise happens. Stop work only when a deviation would invalidate the goal itself.
 
 ## Entry categories

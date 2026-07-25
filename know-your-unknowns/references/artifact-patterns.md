@@ -55,5 +55,5 @@ The signature pattern: interactive selections accumulate into a structured, copy
 ## Delivery and hygiene
 
 - Save artifacts to a scratch location — a dedicated directory at project root (e.g. `./design-directions/`, `./artifacts/`) or a single file like `change-report.html` — never inside the app's source tree.
-- **Artifacts are scaffolding, not deliverables:** don't commit them unless the user asks. In a git repo, add them to `.git/info/exclude` (not `.gitignore`, which would itself show up in the diff).
+- **Artifacts are scaffolding, not deliverables:** don't commit them unless the user asks. In a git repo, add them to the repo's info/exclude file — locate it with `git rev-parse --git-path info/exclude` (hardcoding `.git/info/exclude` breaks in worktrees and submodules, where `.git` is a file). Not `.gitignore`, which would itself show up in the diff. If the path can't be resolved or the filesystem is read-only, keep the output in chat instead of writing it.
 - Tell the user the file path, what to do with it, and the expected reply format. When the reply comes back, act on it — the artifact is a means, the folded-in decisions are the product.

@@ -8,7 +8,7 @@
 
 ## 内容概览
 
-**11 项技术**覆盖开发全生命周期，以**自包含交互式 HTML artifact**（而非大段 markdown）交付，外加一个横切政策层——即使没有触发任何具体技术，它也为一切非平凡任务提供默认行为。
+**11 项技术**覆盖开发全生命周期，每项按"最快消解未知"的原则选择交付媒介——比较、mock、计划、测验用**自包含交互式 HTML artifact**；unknowns scan、访谈、实现笔记日志走纯聊天或 markdown——外加一个横切政策层：即使没有触发任何具体技术，它也为一切非平凡任务提供默认行为。
 
 ### 四类未知
 
@@ -48,46 +48,44 @@
 
 ## 安装
 
-### Claude Code（个人 skill）
+每个宿主**只装一个位置**，不要维护多份副本。下面列出的都是各宿主**自己的原生路径**（不是兼容层）：
+
+| 宿主 | 用户级 | 项目级 |
+|---|---|---|
+| Claude Code | `~/.claude/skills/` | `.claude/skills/` |
+| Cursor | `~/.cursor/skills/` | `.cursor/skills/` |
+| Codex | `~/.agents/skills/` | `.agents/skills/` |
+
+某个宿主可能额外加载别的宿主的路径（取决于版本与设置）——那是附带效果，不要当作正式安装位置来写。
 
 ```bash
 git clone https://github.com/dudaxing/know-your-unknowns-skill.git
-cp -r know-your-unknowns-skill/know-your-unknowns ~/.claude/skills/
+cp -r know-your-unknowns-skill/know-your-unknowns ~/.claude/skills/     # Claude Code
+# 或 ~/.cursor/skills/   （Cursor）
+# 或 ~/.agents/skills/   （Codex）
 ```
 
-Windows（PowerShell）：
+Windows（PowerShell）——把目标目录换成你的宿主：
 
 ```powershell
 git clone https://github.com/dudaxing/know-your-unknowns-skill.git
 Copy-Item -Recurse know-your-unknowns-skill/know-your-unknowns "$env:USERPROFILE\.claude\skills\"
 ```
 
-新会话自动生效。验证方式：对 Claude Code 说 *"对 auth 模块做一次盲区扫描"*。
-
-### Cursor
-
-选 **一个** 安装位置即可。Cursor 原生 skill 根包括项目/用户级 **`.cursor/skills/`**（以及 Codex 风格的 **`.agents/skills/`**）。兼容路径：**`~/.claude/skills/`** 是否加载取决于 Cursor 版本与第三方/兼容设置——不要再把它写成唯一位置。
-
-项目级原生示例：
+改装到项目级：
 
 ```powershell
 New-Item -ItemType Directory -Force "$PWD\.cursor\skills" | Out-Null
 Copy-Item -Recurse .\know-your-unknowns "$PWD\.cursor\skills\"
 ```
 
-兼容用户目录示例：
+安装或更新后，**新开一个聊天**是稳妥做法。Claude Code 会在会话内感知已知 skills 目录里的改动；但如果某个 skills 根目录在会话开始时并不存在，则需要重启。
 
-```powershell
-Copy-Item -Recurse .\know-your-unknowns "$env:USERPROFILE\.claude\skills\"
-```
-
-安装或更新后请 **新开 Agent 聊天**。HTML 工件用浏览器打开 `file://`；scratch 与 `.git/info/exclude` 规则仍适用。
-
-验证：*"对 auth 模块做一次盲区扫描"* 或 *"就导出功能访谈我"*。
+验证：*"对 auth 模块做一次盲区扫描"* 或 *"就导出功能访谈我"*。HTML 工件用浏览器打开 `file://`；scratch 路径与 info/exclude 规则在所有宿主上一致适用。
 
 ### 打包版 `.skill` 文件
 
-[dist/know-your-unknowns.skill](dist/know-your-unknowns.skill) 是经过校验的打包分发版（带 `.skill` 扩展名的 zip），适用于接受 skill 上传的平台。
+[dist/know-your-unknowns.skill](dist/know-your-unknowns.skill) 是打包分发版（带 `.skill` 扩展名的 zip），适用于接受 skill 上传的平台。它由 Anthropic `skill-creator` 的打包脚本生成并校验；在 Windows 上校验器必须以 `PYTHONUTF8=1` 运行——默认 GBK 代码页无法解码这些 UTF-8 文件。
 
 ## 如何用这套 skill 科学地设计代码
 
@@ -162,14 +160,14 @@ dist/
 └── know-your-unknowns.skill   打包分发版
 ```
 
-布局遵循**渐进披露**原则：常驻上下文的只有约 100 词的描述；SKILL.md 正文在触发时加载；每项技术的参考文件只在该技术运行时加载。用一项技术永远不必为另外十项付出上下文代价。
+布局遵循**渐进披露**原则：常驻上下文的只有 frontmatter 描述（约 1.3 KB，含中英文触发词）；SKILL.md 正文在触发时加载；每项技术的参考文件只在该技术运行时加载。用一项技术永远不必为另外十项付出上下文代价。
 
 ## 设计脉络
 
 本 skill 融合了三个来源，各取其长：
 
 1. **[Thariq 配套演示](https://thariqs.github.io/html-effectiveness/unknowns/)**（主体）——完整的 11 项技术及其交互深度：盲区七类模式、语义地图的"承重细节"标注法、reply-builder 机制。
-2. **[GreatMark/fable-field-guide-skills](https://github.com/GreatMark/fable-field-guide-skills)**——行为规则（先锚定用户起点；访谈每题给推荐项；至少一个设计方向要超出用户既有品味）与工件卫生（scratch 目录、`.git/info/exclude`、脚手架不进 changeset）。
+2. **[GreatMark/fable-field-guide-skills](https://github.com/GreatMark/fable-field-guide-skills)**——行为规则（先锚定用户起点；访谈每题给推荐项；至少一个设计方向要超出用户既有品味）与工件卫生（scratch 目录、git info/exclude、脚手架不进 changeset）。
 3. **一个 `unknowns-driven-development` 变体**——横切政策层：默认 unknowns scan、ask-vs-decide 政策、失败模式清单。
 
 ## 致谢

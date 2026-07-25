@@ -9,7 +9,7 @@
 - One throwaway HTML file, fake-but-realistic data, zero backend, zero integration with the real app.
 - Build the 2–3 competing variants *in the same file* so they can be toggled and compared.
 - Note in the artifact where the real implementation will live (e.g. `apps/player/src/annotate/Toolbar.tsx` behind a feature flag) so the mock is explicitly disposable.
-- The mock lives in a scratch directory, is never committed, and goes in `.git/info/exclude` in a git repo.
+- The mock lives in a scratch directory, is never committed, and goes in the file reported by `git rev-parse --git-path info/exclude` in a git repo.
 
 ## Artifact structure
 

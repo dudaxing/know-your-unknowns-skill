@@ -8,7 +8,7 @@ Based on Thariq Shihipar's **"Know Your Unknowns"** field guide and its [compani
 
 ## What you get
 
-**11 techniques** covering the full development lifecycle, delivered as **self-contained interactive HTML artifacts** — not walls of markdown — plus a cross-cutting policy layer that applies even when no specific technique is triggered.
+**11 techniques** covering the full development lifecycle, each delivered in the medium that reduces unknowns fastest — **self-contained interactive HTML artifacts** for comparisons, mocks, plans, and quizzes; plain chat or markdown for the unknowns scan, the interview, and the implementation-notes log — plus a cross-cutting policy layer that applies even when no specific technique is triggered.
 
 ### The four kinds of unknowns
 
@@ -48,46 +48,44 @@ Every decision-seeking artifact ends with a **reply builder**: steal/skip chips,
 
 ## Installation
 
-### Claude Code (personal skill)
+Install into **one** root per host — don't maintain divergent copies. Each of these is that host's own native skill location:
+
+| Host | User-level | Project-level |
+|---|---|---|
+| Claude Code | `~/.claude/skills/` | `.claude/skills/` |
+| Cursor | `~/.cursor/skills/` | `.cursor/skills/` |
+| Codex | `~/.agents/skills/` | `.agents/skills/` |
+
+A host may additionally pick up another host's root depending on version and settings; treat that as a bonus, not the documented path.
 
 ```bash
 git clone https://github.com/dudaxing/know-your-unknowns-skill.git
-cp -r know-your-unknowns-skill/know-your-unknowns ~/.claude/skills/
+cp -r know-your-unknowns-skill/know-your-unknowns ~/.claude/skills/     # Claude Code
+# or: ~/.cursor/skills/   (Cursor)
+# or: ~/.agents/skills/   (Codex)
 ```
 
-On Windows (PowerShell):
+Windows (PowerShell) — swap the destination for your host:
 
 ```powershell
 git clone https://github.com/dudaxing/know-your-unknowns-skill.git
 Copy-Item -Recurse know-your-unknowns-skill/know-your-unknowns "$env:USERPROFILE\.claude\skills\"
 ```
 
-New sessions pick it up automatically. Verify by asking Claude Code: *"Do a blindspot pass on the auth module."*
-
-### Cursor
-
-Prefer **one** location. Native Cursor skill roots include project/user **`.cursor/skills/`** (and Codex-style **`.agents/skills/`**). Compat: **`~/.claude/skills/`** may also load depending on Cursor version / third-party settings — not the only path.
-
-Example (project-native):
+Project-level install instead:
 
 ```powershell
 New-Item -ItemType Directory -Force "$PWD\.cursor\skills" | Out-Null
 Copy-Item -Recurse .\know-your-unknowns "$PWD\.cursor\skills\"
 ```
 
-Example (compat user install):
+After installing or updating, starting a **new chat** is the safe default. Claude Code picks up edits inside an already-known skills directory during a session, but a skills root that did not exist when the session started needs a restart.
 
-```powershell
-Copy-Item -Recurse .\know-your-unknowns "$env:USERPROFILE\.claude\skills\"
-```
-
-After install/update, open a **new Agent chat**. Open HTML artifacts via `file://`; scratch-directory and `.git/info/exclude` hygiene still apply.
-
-Verify: *"Do a blindspot pass on the auth module"* or *"Interview me about the export feature."*
+Verify: *"Do a blindspot pass on the auth module"* or *"Interview me about the export feature."* HTML artifacts open via `file://` or the system browser; scratch-path and info/exclude hygiene applies on every host.
 
 ### Packaged `.skill` file
 
-[dist/know-your-unknowns.skill](dist/know-your-unknowns.skill) is the validated, packaged distribution (a zip with a `.skill` extension) for platforms that accept skill uploads.
+[dist/know-your-unknowns.skill](dist/know-your-unknowns.skill) is the packaged distribution (a zip with a `.skill` extension) for platforms that accept skill uploads. It is produced and validated with Anthropic's `skill-creator` packaging script; on Windows the validator must run under `PYTHONUTF8=1`, since the default GBK codepage fails to decode these UTF-8 files.
 
 ## How to use this skill scientifically
 
@@ -148,7 +146,7 @@ Techniques chain naturally — a typical full-feature flow: blindspot pass → i
 
 ```
 know-your-unknowns/            The skill (install into one host skill root, e.g. .cursor/skills/ or ~/.claude/skills/)
-├── SKILL.md                   Core: principles, technique selection table, workflow (~120 lines)
+├── SKILL.md                   Core: principles, technique selection table, workflow (112 lines)
 ├── references/                Loaded on demand, one file per technique
 │   ├── scan-and-policies.md   Cross-cutting: unknowns scan, ask-vs-decide, failure modes
 │   ├── artifact-patterns.md   HTML artifact construction rules + reply-builder spec
@@ -162,14 +160,14 @@ dist/
 └── know-your-unknowns.skill   Packaged distribution
 ```
 
-The layout follows **progressive disclosure**: only the ~100-word description sits in context permanently; the SKILL.md body loads when the skill triggers; each technique's reference file loads only when that technique runs. Using one technique never pays the context cost of the other ten.
+The layout follows **progressive disclosure**: only the frontmatter description (~1.3 KB, English plus Chinese trigger phrases) sits in context permanently; the SKILL.md body loads when the skill triggers; each technique's reference file loads only when that technique runs. Using one technique never pays the context cost of the other ten.
 
 ## Design lineage
 
 This skill synthesizes three sources, keeping the best of each:
 
 1. **[Thariq's companion demos](https://thariqs.github.io/html-effectiveness/unknowns/)** (primary) — all 11 techniques with their full interactive depth: the seven blindspot categories, the semantics map's "load-bearing detail" annotations, the reply-builder mechanics.
-2. **[GreatMark/fable-field-guide-skills](https://github.com/GreatMark/fable-field-guide-skills)** — behavioral rules (anchor on the user's starting point first; recommend an option in every interview question; push one design direction beyond stated taste) and artifact hygiene (scratch directories, `.git/info/exclude`, never committing scaffolding).
+2. **[GreatMark/fable-field-guide-skills](https://github.com/GreatMark/fable-field-guide-skills)** — behavioral rules (anchor on the user's starting point first; recommend an option in every interview question; push one design direction beyond stated taste) and artifact hygiene (scratch directories, git info/exclude, never committing scaffolding).
 3. **An `unknowns-driven-development` variant** — the cross-cutting policy layer: the default unknowns scan, the ask-vs-decide policy, and the failure-modes list.
 
 ## Credits

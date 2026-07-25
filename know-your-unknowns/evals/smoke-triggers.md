@@ -51,7 +51,7 @@ Interview me one question at a time about the export feature. Prioritize questio
 - Loads [references/design-directions.md](../references/design-directions.md)
 - Single self-contained HTML with 3–5 distinct directions on the same data
 - Steal/skip chips + copyable assembled reply at bottom
-- Scratch path outside app source tree; suggests `.git/info/exclude` if git repo
+- Scratch path outside app source tree; if a git repo, suggests excluding via `git rev-parse --git-path info/exclude` (not a hardcoded `.git/info/exclude`, not `.gitignore`)
 
 ---
 
