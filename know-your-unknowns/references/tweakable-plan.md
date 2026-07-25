@@ -27,28 +27,13 @@ When the user approves, compile a **handoff bundle** and **recommend** a fresh i
 
 Default: tell the user to start a **new session** and attach these files. If they explicitly ask to continue in the **same session**, create/confirm the notes log first, then implement — do not refuse solely because the session was not refreshed.
 
-## Optional: plan gate verification
+## Optional: independent review before implementation
 
-If the project already has plan-gate hooks **and** `~/.claude/skills/codex-verify/scripts/verify.sh` is present and runnable in the current shell, suggest running plan review **before** source edits. Export approved plan sections (decisions + sequencing + **allowed path prefixes**) to a markdown file under `.codex-verify/plans/` first (scaffolding — prefer excluding via `git rev-parse --git-path info/exclude`; do not commit unless the project wants gate plans in git).
+A plan is cheapest to correct while no code exists yet. If the user has an independent review tool or a second reviewer available, the moment between approval and the first source edit is when to use it. Mention the opportunity; do not name, invoke, or hardcode a particular tool — the user's host routes to whichever one they have, and a tool this skill names may be absent, differently configured, or on another host entirely.
 
-`VERIFY_ALLOWED_PATHS` must be set in the **environment of the verify command** (comma-separated path prefixes). It only gates Edit/Write **after** plan PASS — it is not a substitute for the plan text.
+## When the environment refuses writes
 
-**Preferred (Git Bash) — stdin redirect preserves UTF-8 bytes; avoid `$(cat …)`:**
-
-```bash
-export VERIFY_ALLOWED_PATHS="know-your-unknowns/,README.md,dist/"
-bash "$HOME/.claude/skills/codex-verify/scripts/verify.sh" plan < .codex-verify/plans/export.md
-```
-
-**PowerShell 5.1 — do not pipe `Get-Content` into bash** (corrupts Unicode such as `—` / `→` / 中文). Run the redirect **inside** Git Bash:
-
-```powershell
-& bash -lc 'export VERIFY_ALLOWED_PATHS="know-your-unknowns/,README.md,dist/"; bash "$HOME/.claude/skills/codex-verify/scripts/verify.sh" plan < .codex-verify/plans/export.md'
-```
-
-(`bash` must be on PATH, e.g. Git Bash. This skill documents Git Bash on Windows — not WSL path translation.)
-
-If hooks/`.codex-verify/` exist but the verify CLI is missing or not runnable, say so and skip the fixed command. PASS writes the marker and unlocks gated edits; this skill does not require codex-verify.
+Creating the artifact, the scratch directory, or the notes log can be blocked — a permission hook, a read-only sandbox, a CI runner, a repo where `.git` is not writable. When that happens, say plainly what was refused, deliver the same content in chat instead, and do not retry the write in a loop. The plan is the deliverable; the file is only a container for it.
 
 ## Rules
 

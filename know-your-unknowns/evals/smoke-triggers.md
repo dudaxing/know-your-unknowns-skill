@@ -97,7 +97,7 @@ Go: approve
 - Compiles handoff bundle; **recommends** a new implementation session; does **not** start implementing from bare approve alone
 - Does **not** start coding in the same turn as first presenting the plan
 - If user then says "continue here / implement in this session", creates/confirms `implementation-notes.md` then implements
-- Codex-verify: if the project has **no** plan-gate hooks / `.codex-verify/`, do **not** mention verify at all; if hooks exist but `verify.sh` is missing/unrunnable, note CLI unavailable and skip the fixed command
+- Names no specific third-party review tool, and issues no tool-specific command; if it mentions independent review at all, it does so as an opportunity for the user to act on
 
 ---
 
