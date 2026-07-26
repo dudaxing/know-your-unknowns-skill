@@ -1,0 +1,30 @@
+name: Release skill
+
+# Push a tag like v1.0.0 and this builds the .skill from exactly that source
+# and attaches it to the GitHub release. The artifact therefore cannot drift:
+# it is never stored, only derived from the tagged commit.
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Validate and build
+        run: python scripts/build_skill.py
+
+      - name: Publish the archive as a release asset
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/know-your-unknowns.skill
+          generate_release_notes: true

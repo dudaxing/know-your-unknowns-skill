@@ -1,0 +1,36 @@
+name: Validate skill
+
+# Runs on every push and pull request. This is the guard that replaces the
+# committed .skill binary: instead of storing a build artifact that silently
+# drifts from source, we verify the source itself is always packageable.
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Validate skill structure, links, and content
+        run: python scripts/build_skill.py --check
+
+      - name: Verify the build is byte-reproducible
+        run: |
+          python scripts/build_skill.py
+          mv dist/know-your-unknowns.skill /tmp/first.skill
+          python scripts/build_skill.py
+          cmp /tmp/first.skill dist/know-your-unknowns.skill
+
+      - name: Verify no build artifact is tracked in git
+        run: |
+          if git ls-files --error-unmatch dist/ >/dev/null 2>&1; then
+            echo "dist/ is tracked in git; build artifacts must stay untracked."
+            exit 1
+          fi

@@ -85,7 +85,17 @@ Verify: *"Do a blindspot pass on the auth module"* or *"Interview me about the e
 
 ### Packaged `.skill` file
 
-[dist/know-your-unknowns.skill](dist/know-your-unknowns.skill) is the packaged distribution (a zip with a `.skill` extension) for platforms that accept skill uploads. It is produced and validated with Anthropic's `skill-creator` packaging script; on Windows the validator must run under `PYTHONUTF8=1`, since the default GBK codepage fails to decode these UTF-8 files.
+For platforms that accept skill uploads, grab `know-your-unknowns.skill` from the [Releases page](https://github.com/dudaxing/know-your-unknowns-skill/releases) — each tagged version attaches an archive built by CI from exactly that commit.
+
+To build one yourself:
+
+```bash
+python scripts/build_skill.py
+```
+
+That validates the skill and writes `dist/know-your-unknowns.skill`. Standard library only, no arguments, works on Windows without an encoding override. The build is byte-reproducible: the same source always produces the same archive, so you can check whether a copy is stale by rebuilding and comparing.
+
+The archive is deliberately **not** committed to this repository. A build artifact stored next to its source drifts the first time someone edits a reference file without rebuilding, and the drift is invisible in review because the diff is binary. `python scripts/build_skill.py --check` runs the same validation CI runs on every push: frontmatter and description limits, internal link integrity, and a scan for machine-specific paths or references reaching into another skill's install directory.
 
 ## How to use this skill scientifically
 
@@ -156,9 +166,14 @@ know-your-unknowns/            The skill (install into one host skill root, e.g.
 │   └── smoke-triggers.md      Trigger → expected-behavior acceptance cases
 └── assets/
     └── artifact-skeleton.html Reusable single-file skeleton: chips, checkboxes, reply builder
-dist/
-└── know-your-unknowns.skill   Packaged distribution
+scripts/
+└── build_skill.py             Validate + build the .skill archive (stdlib only)
+.github/workflows/
+├── validate.yml               Runs the validation on every push
+└── release.yml                Builds and attaches the archive on a version tag
 ```
+
+`dist/` is build output and is not tracked; run `python scripts/build_skill.py` to produce it.
 
 The layout follows **progressive disclosure**: only the frontmatter description (~1.3 KB, English plus Chinese trigger phrases) sits in context permanently; the SKILL.md body loads when the skill triggers; each technique's reference file loads only when that technique runs. Using one technique never pays the context cost of the other ten.
 

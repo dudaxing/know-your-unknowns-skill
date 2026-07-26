@@ -85,7 +85,17 @@ Copy-Item -Recurse .\know-your-unknowns "$PWD\.cursor\skills\"
 
 ### 打包版 `.skill` 文件
 
-[dist/know-your-unknowns.skill](dist/know-your-unknowns.skill) 是打包分发版（带 `.skill` 扩展名的 zip），适用于接受 skill 上传的平台。它由 Anthropic `skill-creator` 的打包脚本生成并校验；在 Windows 上校验器必须以 `PYTHONUTF8=1` 运行——默认 GBK 代码页无法解码这些 UTF-8 文件。
+面向接受 skill 上传的平台：到 [Releases 页面](https://github.com/dudaxing/know-your-unknowns-skill/releases)下载 `know-your-unknowns.skill`——每个打了 tag 的版本都由 CI 从该提交现场构建并附上。
+
+也可以自己构建：
+
+```bash
+python scripts/build_skill.py
+```
+
+它会先校验 skill，再写出 `dist/know-your-unknowns.skill`。纯标准库、无需参数，在 Windows 上也不用设编码环境变量。构建是**字节可复现**的：同样的源码永远产出同样的归档，所以想确认某个副本是不是过期的，重新构建比对即可。
+
+这个归档**刻意不提交进仓库**。构建产物和源码放在一起，第一次有人改了 reference 却忘记重新打包就会失步，而且因为是二进制，评审时看不出来。`python scripts/build_skill.py --check` 跑的是 CI 每次推送都会跑的那套校验：frontmatter 与描述长度上限、内部链接完整性、以及对本机绝对路径和"伸手进别的 skill 安装目录"的扫描。
 
 ## 如何用这套 skill 科学地设计代码
 
@@ -156,9 +166,14 @@ know-your-unknowns/            skill 本体（安装到某一个宿主 skill 根
 │   └── smoke-triggers.md      触发句 → 期望行为验收用例
 └── assets/
     └── artifact-skeleton.html 可复用单文件骨架：芯片、复选框、reply builder
-dist/
-└── know-your-unknowns.skill   打包分发版
+scripts/
+└── build_skill.py             校验 + 构建 .skill 归档（纯标准库）
+.github/workflows/
+├── validate.yml               每次推送跑校验
+└── release.yml                打版本 tag 时构建并附到 Release
 ```
+
+`dist/` 是构建输出，不纳入版本控制；需要时运行 `python scripts/build_skill.py` 生成。
 
 布局遵循**渐进披露**原则：常驻上下文的只有 frontmatter 描述（约 1.3 KB，含中英文触发词）；SKILL.md 正文在触发时加载；每项技术的参考文件只在该技术运行时加载。用一项技术永远不必为另外十项付出上下文代价。
 

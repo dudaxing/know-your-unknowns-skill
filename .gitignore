@@ -25,6 +25,11 @@
 *.off
 *.bak
 
+# Build output. The .skill archive is derived from know-your-unknowns/ by
+# scripts/build_skill.py; committing it would let the binary drift from source.
+# Releases attach a copy built from the tagged commit.
+dist/
+
 # Discovery artifacts this skill's own techniques produce
 design-directions/
 unknowns-artifacts/
