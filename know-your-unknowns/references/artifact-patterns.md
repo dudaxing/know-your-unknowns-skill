@@ -10,7 +10,7 @@ Use plain chat/markdown instead when the content is short, purely linear, or the
 
 ## Hard rules
 
-1. **One self-contained `.html` file.** Inline all CSS and JS. No CDN links, no external fonts, no build step, no network requests. It must render identically from `file://`.
+1. **One self-contained `.html` file.** Inline all CSS and JS. No CDN links, no external fonts, no build step, no network requests. It must render identically from `file://`. The one exception is design directions, which may split into a file per direction plus an index when the directions are full-page experiences (see [design-directions.md](design-directions.md)); each file is still self-contained.
 2. **Fake data must be plausible and clearly disposable** (mocks, design directions); **factual artifacts must cite the real territory** (file paths, PR numbers, flag names) — never invent citations.
 3. **Every artifact that asks for decisions ends with a reply builder** (see below). An artifact that leaves the user to type a freeform response has failed at its job.
 4. **State the artifact's contract at the top:** one line saying what this is and what the user should do ("Click through the three placements, answer the four questions, then copy the reply at the bottom").
@@ -18,9 +18,15 @@ Use plain chat/markdown instead when the content is short, purely linear, or the
 
 ## The artifact id
 
-Every artifact carries an id: `KYU-` plus six lowercase alphanumerics, chosen when the artifact is created (`KYU-7f3a2b`). Print it in the artifact's header, repeat it in the chat message that delivers the file, and have the reply builder emit `Artifact: <id>` as the first line of the assembled reply.
+Every artifact carries an id: `KYU-` plus six lowercase alphanumerics (`[a-z0-9]{6}`). Print it in the artifact's header, repeat it in the chat message that delivers the file, and have the reply builder emit `Artifact: <id>` as the first line of the assembled reply.
 
-It exists so a pasted reply is attributable to *this* artifact. Without it, a checkpoint phrase quoted from documentation, replayed from an older artifact, or echoed out of scrollback is indistinguishable from a decision the user just made. Ids are per-artifact, not per-session: a revised artifact that supersedes an earlier one gets a new id, which is what makes approvals of the old version stop counting.
+**Minting.** Draw a fresh id at random for each artifact — do not count up, do not reuse a memorable value, and never ship the id that happens to be sitting in the skeleton. If any id is still live in the conversation, draw again. Six base36 characters is roughly 31 bits, which is ample for telling apart the handful of artifacts alive in one conversation, and is not trying to be more than that.
+
+**Re-minting.** Any revision that changes a decision, a map row, a quiz question, or an answer key produces a **new id**. This is what makes an approval of the superseded version stop counting; keeping the id while editing the content silently re-validates an old confirm, which is the exact failure the id exists to prevent. Cosmetic edits — typos, styling — may keep the id.
+
+**Never write a real-format id into documentation or templates.** Examples in prose, in this repository, and in the skeleton use `KYU-EXAMPLE`, which is deliberately not `[a-z0-9]{6}` and therefore cannot match a live artifact. An example id that is also a valid id turns every quotation of the docs into a potential false confirm.
+
+**What it is.** A correlation tag, not authentication. It is visible in the artifact and trivially copyable, so it proves nothing about who sent a reply — and it does not need to, since overriding a checkpoint is the user's prerogative anyway. Its whole job is to stop *the agent* from reading a quoted, stale, or superseded reply as a fresh decision.
 
 ## The reply builder
 
@@ -31,7 +37,7 @@ The signature pattern: interactive selections accumulate into a structured, copy
 - **One field per line, `Artifact:` first.** The fold-forward protocol parses whole lines only, so a reply that packs several fields into one sentence is unparseable by the very rules that consume it:
 
   ```
-  Artifact: KYU-7f3a2b
+  Artifact: KYU-EXAMPLE
   Direction: 2 (airy editorial)
   Steal: serif numerals (D2), age timeline (D3)
   Skip: status column (D1)
@@ -49,7 +55,7 @@ The signature pattern: interactive selections accumulate into a structured, copy
 - **Approve/change chips** (tweakable plans): per decision; "change" opens a one-line text input for the correction.
 - **Copyable prompt blocks** (blindspot cards, improved prompts): `<pre>` with a per-block copy button.
 - **Quiz** (merge quiz): multiple-choice (A–D) with instant feedback; wrong answers link (`href="#section"`) to the report section that teaches the point; the final checklist section stays `hidden` until the in-page score is perfect. The **copyable reply** emits the `Artifact:` line plus one `Q<n>:` line per question — **never** a `Quiz score:` summary. The agent re-scores in chat and reveals the checklist only when every question in that artifact has a correct letter; `(unanswered)` counts as incomplete.
-- **Sign-off gate** (semantics map): each map row has a stable **row id**; closing instruction asks for whitelist lines — `semantics confirmed` and/or `Correction: <row-id> -> <text>`, optional `Session: continue here`.
+- **Sign-off block** (semantics map): each map row has a stable **row id**; closing instruction asks for whitelist lines — `semantics confirmed` and/or `Correction: <row-id> -> <text>`, optional `Session: continue here`.
 
 ## Layout patterns
 

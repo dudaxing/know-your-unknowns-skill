@@ -17,7 +17,7 @@ Open with **summary chips** — one glanceable line: effort, files touched, migr
 Per-decision approve/change chips assembling into a copyable reply. The reply is led by the plan's **artifact id** and ends in one of exactly three go lines — no paraphrases, since an open-ended "or equivalent" is indistinguishable from ordinary conversation:
 
 ```
-Artifact: KYU-4c1e90
+Artifact: KYU-EXAMPLE
 Change: storage -> render-on-demand
 Go: approve
 ```

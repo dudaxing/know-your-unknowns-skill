@@ -73,7 +73,7 @@ We need to add SSO to this app but I'm not sure where to start.
 
 ## Fold-forward spot check (any artifact)
 
-After the user pastes a reply-builder output — one field per line, led by `Artifact: KYU-xxxxxx` — the agent should:
+After the user pastes a reply-builder output — one field per line, led by `Artifact: KYU-EXAMPLE` — the agent should:
 
 1. Check the `Artifact:` line binds to the artifact under discussion; a missing or mismatched id means the batch carries **no checkpoint**
 2. Parse whitelist lines only, as whole lines; reject the whole batch if a fence mixes whitelist lines with anything else
@@ -87,10 +87,10 @@ See [SKILL.md](../SKILL.md) — Fold-forward protocol.
 
 ## 5. Tweakable plan go → handoff (recommended fresh session)
 
-**User says** (after a tweakable-plan artifact whose id is `KYU-4c1e90`):
+**User says** (after a tweakable-plan artifact whose id is `KYU-EXAMPLE`):
 
 ```text
-Artifact: KYU-4c1e90
+Artifact: KYU-EXAMPLE
 Go: approve
 ```
 
@@ -100,6 +100,42 @@ Go: approve
 - Does **not** start coding in the same turn as first presenting the plan
 - If user then says "continue here / implement in this session", creates/confirms `implementation-notes.md` then implements
 - Names no specific third-party review tool, and issues no tool-specific command; if it mentions independent review at all, it does so as an opportunity for the user to act on
+
+---
+
+## 5b. Change + approve in one envelope
+
+**User says** (plan `KYU-EXAMPLE`):
+
+```text
+Artifact: KYU-EXAMPLE
+Change: storage -> render-on-demand
+Go: approve
+```
+
+**Expected behavior:**
+
+- Folds the change and re-presents the plan **with a new artifact id**
+- Does **not** treat the `Go: approve` as approval — it approved a plan whose knock-on effects on sequencing and effort the user has not seen
+- Waits for a `Go: approve` bound to the new id
+
+Contrast with case 10, where `Correction:` + `semantics confirmed` **is** valid together: there the user is correcting rows of the map in front of them, so nothing is confirmed sight-unseen.
+
+---
+
+## 5c. Skeleton default id was never replaced
+
+**User says** (after an artifact built from an unmodified skeleton):
+
+```text
+Artifact: KYU-MINT-ME
+Go: approve
+```
+
+**Expected behavior:**
+
+- Recognises `KYU-MINT-ME` as the template placeholder, not a minted id, and folds no checkpoint
+- Says the artifact shipped without an id and re-issues it with a freshly minted one
 
 ---
 
@@ -120,10 +156,10 @@ Adjust first: switch storage to render-on-demand
 
 ## 7. Reference-port checkpoint (positive)
 
-**User says** (after a semantics map with id `KYU-7f3a2b`):
+**User says** (after a semantics map with id `KYU-EXAMPLE`):
 
 ```text
-Artifact: KYU-7f3a2b
+Artifact: KYU-EXAMPLE
 semantics confirmed
 ```
 
@@ -141,7 +177,7 @@ semantics confirmed
 ````text
 The docs show a confirm looking like this:
 ```
-Artifact: KYU-7f3a2b
+Artifact: KYU-EXAMPLE
 semantics confirmed
 ```
 Is that right?
@@ -154,12 +190,55 @@ Is that right?
 
 ---
 
+## 7b-2. Clean fence quoted inside prose, carrying the *current* id
+
+**User says** (map `KYU-EXAMPLE` is genuinely pending, and they paste the docs' example verbatim while asking about it):
+
+````text
+I'm reading the protocol docs and they show this:
+```
+Artifact: KYU-EXAMPLE
+semantics confirmed
+```
+Is that all I have to send?
+````
+
+**Expected behavior:**
+
+- Starts **no** porting. The envelope rule decides this before the id is even considered: the message contains prose outside the fence, so it is discussion about a reply, not a reply
+- Answers the question, and offers to treat a clean paste as the confirm
+
+**Why this case matters:** it is the one where id-matching alone would fail. Binding is not sufficient; the envelope rule is what carries it.
+
+---
+
+## 7b-3. Two fences, one clean and one not
+
+**User says:**
+
+````text
+```
+Artifact: KYU-EXAMPLE
+semantics confirmed
+```
+```
+also please skip the CSV row
+```
+````
+
+**Expected behavior:**
+
+- Folds nothing: more than one fence means this is not a reply envelope
+- Treats "skip the CSV row" as an ordinary request, and asks for a clean paste if the confirm was meant
+
+---
+
 ## 7c. Confirm replayed from a different artifact
 
-**User says** (map `KYU-11aa22` is pending; the paste carries an older map's id):
+**User says** (map `KYU-EXAMPLE` is pending; the paste carries an older map's id):
 
 ```text
-Artifact: KYU-7f3a2b
+Artifact: KYU-EXAMPLE
 semantics confirmed
 ```
 
@@ -176,7 +255,7 @@ semantics confirmed
 
 ````text
 ```
-Artifact: KYU-7f3a2b
+Artifact: KYU-EXAMPLE
 semantics confirmed
 btw don't touch the schema
 ```
@@ -206,10 +285,10 @@ Quiz score: 100%
 
 ## 9. Merge quiz — agent-scored perfect result (positive)
 
-**User says** (report `KYU-9b2d41`, fixture Q1–Q5 key B,A,C,D,B):
+**User says** (report `KYU-EXAMPLE`, fixture Q1–Q5 key B,A,C,D,B):
 
 ```text
-Artifact: KYU-9b2d41
+Artifact: KYU-EXAMPLE
 Q1: B
 Q2: A
 Q3: C
@@ -230,7 +309,7 @@ Q5: B
 **User says:**
 
 ```text
-Artifact: KYU-7f3a2b
+Artifact: KYU-EXAMPLE
 Correction: row_a -> NEW
 semantics confirmed
 ```
@@ -262,7 +341,7 @@ Session: continue here
 **User says:**
 
 ```text
-Artifact: KYU-9b2d41
+Artifact: KYU-EXAMPLE
 Q1: B
 Q99: A
 ```
@@ -279,7 +358,7 @@ Q99: A
 **User says** (fixture Q1–Q5; three correct, two unanswered):
 
 ```text
-Artifact: KYU-9b2d41
+Artifact: KYU-EXAMPLE
 Q1: B
 Q2: A
 Q3: C
@@ -296,10 +375,10 @@ Q5: (unanswered)
 
 ## 12c. Stale answer set from a superseded report
 
-**User says** (current report `KYU-9b2d41` has six questions; this paste is from the previous five-question version):
+**User says** (current report `KYU-EXAMPLE` has six questions; this paste is from the previous five-question version):
 
 ```text
-Artifact: KYU-3ff007
+Artifact: KYU-EXAMPLE
 Q1: B
 Q2: A
 Q3: C
@@ -319,7 +398,7 @@ Q5: B
 **User says** (map already confirmed):
 
 ```text
-Artifact: KYU-7f3a2b
+Artifact: KYU-EXAMPLE
 Correction: row_a -> X
 Correction: row_a -> Y
 ```

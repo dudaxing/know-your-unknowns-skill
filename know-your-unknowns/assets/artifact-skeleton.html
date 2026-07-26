@@ -101,7 +101,7 @@
 
   <!-- ============ EXAMPLE: A/B question (mock / plan decision) ============ -->
   <h2>Section: A/B questions</h2>
-  <div class="qblock" data-q="Q1 placement">
+  <div class="qblock" data-q="Q1" data-label="placement">
     <div class="qtext">Q1 — Which placement ships?</div>
     <span class="chip radio" data-item="floating pill">floating pill</span>
     <span class="chip radio" data-item="left rail">left rail</span>
@@ -132,7 +132,7 @@
   // Replace with a fresh id when you create the artifact: KYU- plus six lowercase
   // alphanumerics. A revised artifact that supersedes this one gets a NEW id, which
   // is what makes an approval of the old version stop counting.
-  const ARTIFACT_ID = 'KYU-7f3a2b';
+  const ARTIFACT_ID = 'KYU-MINT-ME';  // <- replace with a freshly minted KYU-<6 lowercase alnum>
   document.getElementById('artifact-id').textContent = ARTIFACT_ID;
 
   // ---- chip behaviors ----
@@ -181,9 +181,19 @@
       btn.textContent = label;
       setTimeout(() => { btn.classList.remove('done'); btn.textContent = old; }, 1800);
     };
+    // Select whatever actually holds this text, so the manual path has something
+    // to copy from. Falls back to a temporary textarea for <pre> blocks etc.
     const manual = () => {
       const ta = document.getElementById('reply');
       if (ta && ta.value === text) { ta.focus(); ta.select(); }
+      else {
+        const tmp = document.createElement('textarea');
+        tmp.value = text;
+        tmp.style.cssText = 'position:fixed;left:0;top:0;opacity:0';
+        document.body.appendChild(tmp);
+        tmp.focus(); tmp.select();
+        setTimeout(() => tmp.remove(), 15000);
+      }
       flash('press Ctrl+C', false);
     };
     if (!navigator.clipboard) { manual(); return; }

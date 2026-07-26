@@ -51,14 +51,28 @@ When scanning a codebase, check:
 
 This is the single rule for "do I stop and ask, or decide and keep going?" — before implementation and in the middle of it alike. [implementation-notes.md](implementation-notes.md) applies it to mid-build surprises; it does not define a competing rule.
 
-**The test is whether a conservative option exists**, where conservative means exactly this:
+**The test is whether a conservative option exists.** Apply it in two steps — the first step is what stops "do nothing" from winning every time.
 
-> A conservative option **loses no data and widens no access.**
+**Step 1 — which options even count.** A candidate must *meet the stated goal* and *preserve existing contracts* (public API shape, data formats, documented behaviour, availability for users who already had it). Abandoning the feature, or breaking today's callers, is not a conservative option; it is a different decision, and it belongs to the user.
 
-- **Such an option exists** → take it, record it (template below), flag it prominently, and keep going. Interrupting for every question that touches permissions or data would make the agent unusable; permission questions arise constantly in real work.
-- **No such option exists** — every way forward would drop data, widen access, or commit to a user-visible or product policy that cannot be walked back → **stop and ask.** This is the case that is genuinely the user's to decide.
+**Step 2 — is any candidate conservative?** A conservative candidate has all three properties:
 
-Worked example: mid-build you find guest reviewers could download files they should not, via a new export path. Returning 403 for guests loses no data and widens no access, so it is conservative — take it, log it, flag it, continue. But "should guests be able to export at all?" has no conservative answer — every choice sets policy — so that one stops and asks.
+> It **loses no data**, **widens no access**, and **causes no irreversible external effect** — no money moved, no message or notification sent, no third party told something that cannot be untold.
+
+- **One or more candidates qualify** → take the most conservative; if several tie, take the one with the smallest blast radius, and if they still tie, the one easiest to reverse. Record it (template below), flag it prominently, keep going. Interrupting for every question that touches permissions or data would make the agent unusable; those questions arise constantly in real work.
+- **No candidate qualifies** → **stop and ask.** Every path forward costs something the user has not agreed to, and choosing which cost to pay is theirs.
+
+Worked examples:
+
+| Mid-build situation | Conservative candidate? | Action |
+|---|---|---|
+| Guests could download files they should not, via the new export path | Return 403 for guests on the new path: loses no data, widens no access, reverses trivially | Take it, log it, flag it, continue |
+| Should guests be allowed to export at all? | None — every answer sets policy the user has not stated | Stop and ask |
+| Retry logic might double-charge a card | Making the charge idempotent qualifies; if the payment API cannot express that, no candidate does | Idempotency if available, else stop |
+| The fix would 403 *everyone*, not just guests | Fails step 1 — it breaks availability for users who already had access | Not a candidate; stop and ask |
+| The safe path costs an unbounded amount of compute per request | Fails step 1 if it breaks a stated latency or cost contract | Stop and ask |
+
+The categories below are **examples of where the test usually lands**, not a separate rule. When a category and the test disagree, the test wins.
 
 The categories below are **examples of where the test usually lands**, not a separate rule. When a category and the test disagree, the test wins.
 

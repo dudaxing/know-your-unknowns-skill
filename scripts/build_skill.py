@@ -39,6 +39,10 @@ POLLUTION = [
      "hardcoded $HOME path -- the skill must not assume where a host installs things"),
     (re.compile(r"skills/[A-Za-z0-9_-]+/(scripts|hooks)/"),
      "reaches into another skill's install path -- let the host route instead"),
+    # An example id that is also a *valid* id turns every quotation of the docs
+    # into a potential false confirm. Placeholders must be structurally invalid.
+    (re.compile(r"KYU-[a-z0-9]{6}(?![A-Za-z0-9-])"),
+     "real-format artifact id in documentation -- use the KYU-EXAMPLE placeholder"),
 ]
 
 # README files legitimately document install paths, so they are checked only for

@@ -30,11 +30,14 @@
 # Releases attach a copy built from the tagged commit.
 dist/
 
-# Discovery artifacts this skill's own techniques produce
-design-directions/
-unknowns-artifacts/
-change-report.html
-implementation-notes.md
+# Discovery artifacts this skill's own techniques produce.
+# Anchored with a leading slash: an unanchored `implementation-notes.md` also
+# matches know-your-unknowns/references/implementation-notes.md, which is a
+# published part of the skill -- ripgrep and friends would silently skip it.
+/design-directions/
+/unknowns-artifacts/
+/change-report.html
+/implementation-notes.md
 
 # Python
 __pycache__/

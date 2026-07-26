@@ -110,7 +110,7 @@ python scripts/build_skill.py
 1. **说清任务** — 若未指定技巧，agent 会先跑 compact **Unknowns scan**（四类未知 + 建议下一招 + **可复制触发句**）。
 2. **选对技巧** — 见上表；显式触发优先（如「访谈我」「盲区扫描」）。
 3. **反应式工件** — 比较/布局/测验类产出为单文件 HTML；在页面底部用 reply builder 复制结构化回复，**粘贴回对话**。
-4. **折入下一轮** — 每个 artifact 都带一个 id，回复以 `Artifact: KYU-xxxxxx` 开头，使粘贴回来的决定能归属到**那一份** artifact，而不会与文档里的引用、旧 artifact 的重放、或上下文里的回声混淆。agent 按整行解析白名单字段，先更新计划再行动。三道检查点：移植前 `semantics confirmed`、实现前 `Go: approve`、合并前由 agent 判卷的 `Q<n>:` 满分（粘贴的 `Quiz score:` 不算结果）。
+4. **折入下一轮** — 每个 artifact 都带一个 id，回复以 `Artifact: KYU-EXAMPLE` 开头，使粘贴回来的决定能归属到**那一份** artifact，而不会与文档里的引用、旧 artifact 的重放、或上下文里的回声混淆。agent 按整行解析白名单字段，先更新计划再行动。三道检查点：移植前 `semantics confirmed`、实现前 `Go: approve`、合并前由 agent 判卷的 `Q<n>:` 满分（粘贴的 `Quiz score:` 不算结果）。
 5. **新会话实现** — 计划通过后 **新开 Agent 会话**，只附带计划、决策表、mock/语义地图与 `implementation-notes.md` 路径（见 SKILL.md handoff）。
 6. **实现中** — 用实现笔记记录偏差；**实现后** — buy-in 文档 / 合并前测验按需选用。
 
