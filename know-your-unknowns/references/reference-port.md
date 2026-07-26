@@ -2,7 +2,7 @@
 
 **Hunts:** unknown knowns — behavior the user can point at but not describe. The best reference is source code.
 
-**Use when:** porting or reimplementing existing behavior (another language, another framework, a module seen elsewhere). Make the agent **prove it understood the reference — as a reviewable artifact — before a single line gets ported.** Subtle semantics (truncation, atomicity, monotonic clocks) are exactly what a plausible-looking port silently breaks.
+**Use when:** porting or reimplementing existing behavior (another language, another framework, a module seen elsewhere). Make the agent **show it understood the reference — as a reviewable artifact — before porting.** Subtle semantics (truncation, atomicity, monotonic clocks) are exactly what a plausible-looking port silently breaks.
 
 ## Workflow
 
@@ -20,7 +20,7 @@
 2. **Side-by-side code pairs** — 2–4 annotated source/target excerpts for the trickiest translations, with **load-bearing details flagged by name**: e.g. Rust integer division → JS `Math.floor`, where the `newTokens > 0` guard is "the load-bearing guard — drop it and the bucket stops refilling under frequent polling"; Rust inclusive range `lo..=hi` → `lo + Math.floor(random() * (span + 1))` where the `+1` is "a one-character bug magnet"; Rust `Mutex` → event-loop synchronous contract where "an `await` inserted between check and debit lets two retries both pass."
 3. **Preserve / change / drop table** — every design choice classified: preserved exactly (formulas, economics, guards); deliberately changed with justification (`Instant` → `performance.now()`, both monotonic; `u64` nanos → `number` ms with floor to preserve truncation; injectable RNG); dropped as inapplicable (overflow guards unreachable in the target, thread-safety primitives, foreign instrumentation).
 4. **Edge-case table** — rows of edge case → reference behavior → target equivalent → status (`identical` / `equivalent*`), with asterisks explaining every deliberate difference (e.g. bare `false` becomes a typed `RetryBudgetExhausted` error for the UI). Cover: clock skew, burst at t=0, exhaustion under sustained failure, sub-unit accumulation, behavior at caps.
-5. **Sign-off checkpoint** — print the map's **artifact id** (`KYU-EXAMPLE`) in the header, and give every preserve/change/drop and edge-case row a stable **row id** (`^[a-z][a-z0-9_-]{0,63}$`, unique, case-sensitive). End with: reply using whitelist lines only, led by the `Artifact:` line — exact **`semantics confirmed`**, and/or **`Correction: <row-id> -> <replacement text>`** (one per corrected row). Optionally add **`Session: continue here`** to implement in this session after confirm. Do not start porting until a bound, valid confirm arrives.
+5. **Sign-off checkpoint** — print the map's **artifact id** (`KYU-EXAMPLE`) in the header, and give every preserve/change/drop and edge-case row a stable **row id** (`^[a-z][a-z0-9_-]{0,63}$`, unique, case-sensitive). End with: reply using whitelist lines only, led by the `Artifact:` line — exact **`semantics confirmed`**, and/or **`Correction: <row-id> -> <replacement text>`** (one per corrected row). Optionally add **`Session: continue here`** to implement in this session after confirm. Wait for a bound, valid confirm before porting; if the user tells you to go ahead without one, say what is unverified and go ahead.
 
 ## Reply / fold-forward
 

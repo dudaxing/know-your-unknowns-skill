@@ -15,7 +15,7 @@ Implementation notes usually start in a **new session** after plan approval (rec
 - Log path agreed (`implementation-notes.md` at project root or scratch)
 - Instruction to append on every deviation, not batch at the end
 
-If the user continues in the same session without handoff, still create the log file before the first source edit.
+If the user continues in the same session without a handoff, offer the log before the first source edit; create it once they accept.
 
 ## Mechanics
 
@@ -28,13 +28,13 @@ If the user continues in the same session without handoff, still create the log 
 - **Plan-confirmed** — the plan's assumption checked out (brief; still worth recording as verified territory).
 - **Discovery** — the code already contains something better than the plan (e.g. a production-tested `zipStream.ts` utility, an existing `useProgressChannel()` hook), eliminating planned work or dependencies.
 - **Deviation** — reality contradicts the plan, forcing a choice on the spot. A conservative option existed, so it was taken and logged rather than interrupting the user.
-- **Needs human judgment** — no conservative option existed: every way forward would lose data, widen access, or set a user-visible or product policy (guest access policy, retention windows). By the ask-vs-decide test in [scan-and-policies.md](scan-and-policies.md) this **stops and asks** — log it, state what you would do and why, and wait rather than choosing for the user.
+- **Needs human judgment** — the ask-vs-decide test in [scan-and-policies.md](scan-and-policies.md) found no conservative candidate: every option either fails to meet the goal or breaks an existing contract, or else loses data, widens access, or causes an irreversible external effect. **Stop and ask** — log it, state what you would do and why, and wait rather than choosing for the user. Do not add stop conditions of your own here; that test is the only one.
 
 ## Entry format
 
 - Timestamp.
 - **What the plan said** vs **what the code revealed** — explicit contrast.
-- **The conservative choice taken**, with reasoning — or, if none existed, the question put to the user. Conservative means: **loses no data and widens no access** (the ask-vs-decide test in [scan-and-policies.md](scan-and-policies.md); this file does not define a second rule). Examples of the pattern: ~12% of annotations predate a migration and lack frame timestamps → exclude from video burn-in but include in CSV with a flag, nothing silently dropped; the queue serializes `Date` to ISO strings through JSON breaking staleness checks → define typed wire-format payloads and parse at the worker boundary; guest reviewers with download restrictions could exfiltrate via the new export path → return 403 for all formats, mirroring existing asset checks.
+- **The conservative choice taken**, with reasoning — or, if none existed, the question put to the user. Conservative means all three: **loses no data**, **widens no access**, **causes no irreversible external effect** — and only among candidates that meet the goal and preserve existing contracts ([scan-and-policies.md](scan-and-policies.md); this file defines no rule of its own). Examples of the pattern: ~12% of annotations predate a migration and lack frame timestamps → exclude from video burn-in but include in CSV with a flag, nothing silently dropped; the queue serializes `Date` to ISO strings through JSON breaking staleness checks → define typed wire-format payloads and parse at the worker boundary; guest reviewers with download restrictions could exfiltrate via the new export path → return 403 for all formats, mirroring existing asset checks.
 - **Revisit** notes — what to reconsider later if assumptions change.
 
 ## Log footer (maintained continuously, finalized at session end)

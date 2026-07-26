@@ -35,7 +35,7 @@ When the user approves, compile a **handoff bundle** and **recommend** a fresh i
 - Any linked mock, semantics map, or improved prompt from earlier techniques
 - Empty or continued `implementation-notes.md` path
 
-Default: tell the user to start a **new session** and attach these files. If they explicitly ask to continue in the **same session**, create/confirm the notes log first, then implement — do not refuse solely because the session was not refreshed.
+Default: tell the user to start a **new session** and attach these files. If they explicitly ask to continue in the **same session**, implement — do not refuse solely because the session was not refreshed. Offer the implementation-notes log; create it only if they take the offer.
 
 ## Optional: independent review before implementation
 

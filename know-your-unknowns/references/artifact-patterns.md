@@ -47,6 +47,24 @@ The signature pattern: interactive selections accumulate into a structured, copy
 - Include unanswered questions as `Q3: (unanswered)` so gaps stay visible rather than silently absent.
 - Emit nothing but whitelist lines. A stray note or heading inside the copied block makes the whole batch invalid under [SKILL.md](../SKILL.md) fold-forward rule 2, which is deliberate — but the artifact should never be the thing that triggers it.
 
+## What each technique's reply builder emits
+
+Every producer here emits lines from the [SKILL.md](../SKILL.md) whitelist and nothing else. A technique that cannot fill this column has no reply builder, which is a deliberate answer, not an omission.
+
+| Technique | Lines emitted |
+|---|---|
+| Blindspot pass | **none** — a read-only briefing. Its cards carry copy buttons for prompt fixes the user pastes into their *next request*; that is a new instruction, not a folded field |
+| Teach me my unknowns | **none** — explanatory; nothing to decide |
+| Design directions | `Artifact:` · `Direction:` · `Steal:` · `Skip:` |
+| Mock before you wire | `Artifact:` · `Q<n>:` (chosen option text, one per A/B block) |
+| Brainstorm interventions | `Artifact:` · `Resonates:` |
+| The interview | `Artifact:` · `Q<n>:` (chosen option text, one per question) — when run as an artifact rather than turn-by-turn in chat |
+| Point at a reference | `Artifact:` · `Correction:` · `semantics confirmed` · optional `Session: continue here` |
+| The tweakable plan | `Artifact:` · `Change:` · `Go: approve` / `Go: adjust` / `Go: reject` · optional `Session: continue here` |
+| Implementation notes | **none** — a log, not an artifact |
+| Buy-in doc | **none** — the sign-offs it asks for come from other people, out of band. Naming who owes what is the deliverable |
+| Merge quiz | `Artifact:` · `Q<n>:` (answer letter or `(unanswered)`) |
+
 ## Selection controls by use case
 
 - **Steal/skip chips** (design directions): each notable element gets a chip that cycles neutral → steal → skip. Green/red visual states.

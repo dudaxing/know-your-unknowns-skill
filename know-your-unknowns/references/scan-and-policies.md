@@ -67,14 +67,14 @@ Worked examples:
 | Mid-build situation | Conservative candidate? | Action |
 |---|---|---|
 | Guests could download files they should not, via the new export path | Return 403 for guests on the new path: loses no data, widens no access, reverses trivially | Take it, log it, flag it, continue |
-| Should guests be allowed to export at all? | None — every answer sets policy the user has not stated | Stop and ask |
+| Guests already export elsewhere in the product, and the only fix that closes the hole also removes that | Fails step 1: it withdraws access users already had, so it is not a candidate at all | Stop and ask |
 | Retry logic might double-charge a card | Making the charge idempotent qualifies; if the payment API cannot express that, no candidate does | Idempotency if available, else stop |
 | The fix would 403 *everyone*, not just guests | Fails step 1 — it breaks availability for users who already had access | Not a candidate; stop and ask |
 | The safe path costs an unbounded amount of compute per request | Fails step 1 if it breaks a stated latency or cost contract | Stop and ask |
 
-The categories below are **examples of where the test usually lands**, not a separate rule. When a category and the test disagree, the test wins.
+If two candidates still tie after blast radius and reversibility, take either and say in the log that the tie was arbitrary — a coin-flip you disclose beats a decision you pretend was forced.
 
-The categories below are **examples of where the test usually lands**, not a separate rule. When a category and the test disagree, the test wins.
+The categories below are **examples of where the test usually lands**, not a separate rule. When a category and the test disagree, **the test wins** — including when the test clears something the categories list as usually-stop. A schema change that meets the goal, preserves every existing contract, loses no data, widens no access, and is reversible really is safe to make and log; the category is there for the far more common schema change that fails one of those.
 
 *Usually no conservative option (expect to stop):* architecture and execution model; scope and object model; schema, migration, retention, or API contract changes; anything widening auth, permissions, privacy, billing, or data export; irreversible user-facing behaviour or product policy; rollout and rollback commitments.
 

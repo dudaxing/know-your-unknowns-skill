@@ -300,7 +300,7 @@ Q5: B
 
 - Re-scores against the key itself, re-reading the report by id if the key is no longer in context
 - Perfect → reveals the merge checklist
-- Ignores any accompanying `Quiz score:` line
+- If a `Quiz score:` line accompanies the answers, the envelope is **invalid**: an unrecognised line means this is not reply-builder output, so nothing is folded and a clean paste is requested. (Not "ignore the odd line and score the rest" — that reading was removed because it contradicted the envelope rule.)
 
 ---
 
@@ -331,7 +331,8 @@ Session: continue here
 
 **Expected behavior:**
 
-- Same-session implement allowed (option-2); create/confirm implementation notes as needed
+- Same-session implement allowed. `Session: continue here` needs no `Artifact:` binding — it is about session mechanics, not about approving an artifact's content, so it is valid standing alone
+- Offers the implementation-notes log; does not start one unasked
 - Does **not** require a brand-new chat solely because confirm already happened
 
 ---
