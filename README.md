@@ -22,23 +22,29 @@ Based on Thariq Shihipar's **"Know Your Unknowns"** field guide and its [compani
 | # | Phase | Technique | Hunts | Trigger examples |
 |---|-------|-----------|-------|------------------|
 | 1 | Pre | **Blindspot pass** — scan unfamiliar code + git history, report landmines as cards with copyable prompt fixes | Unknown unknowns | "blindspot pass", "盲区扫描" |
-| 2 | Pre | **Teach me my unknowns** — interactive explainer with vocabulary ladder and live controls | Missing vocabulary | "teach me my unknowns", "教我" |
+| 2 | Pre | **Teach me my unknowns** — interactive explainer with vocabulary ladder and live controls | Missing vocabulary | "teach me my unknowns", "教我我的未知" |
 | 3 | Pre | **Four design directions** — same data, 3–5 incompatible design philosophies, steal/skip chips | Unknown knowns (taste) | "design directions", "出几个设计方向" |
 | 4 | Pre | **Mock before you wire** — throwaway clickable mock with fake data and A/B questions | Unknown knowns (interaction) | "mock it first", "做个原型看看" |
 | 5 | Pre | **Brainstorm the intervention** — ~10 codebase-grounded options, cheapest to most ambitious | The option space | "brainstorm interventions" |
 | 6 | Pre | **The interview** — one question at a time, ordered by architectural blast radius | Known unknowns | "interview me", "访谈我" |
 | 7 | Pre | **Point at a reference** — semantics map proving comprehension, sign-off gate before porting | Recognizable-but-indescribable behavior | "semantics map", "照着这个实现" |
-| 8 | Pre | **The tweakable plan** — sorted by likelihood-of-tweaking, mechanical work collapsed, explicit go/no-go | The decisions most likely to change | "implementation plan", "实现计划" |
+| 8 | Pre | **The tweakable plan** — sorted by likelihood-of-tweaking, mechanical work collapsed, explicit go/no-go | The decisions most likely to change | "tweakable plan", "可调计划" |
 | 9 | During | **Implementation notes** — dated log of every plan deviation and conservative choice | Unknowns discovered mid-flight | "keep implementation notes", "记录实现笔记" |
-| 10 | Post | **The buy-in doc** — demo first, objections pre-answered with linked evidence, named sign-offs | The reviewers' unknowns | "pitch doc", "提案文档" |
+| 10 | Post | **The buy-in doc** — demo first, objections pre-answered with linked evidence, named sign-offs | The reviewers' unknowns | "buy-in doc", "打包给评审" |
 | 11 | Post | **Quiz me before I merge** — merge-readiness report gated by a six-question comprehension quiz | Your own unknowns about the change | "quiz me", "考考我" |
+
+### An invoked toolbox, not a default orchestrator
+
+The skill runs when you ask for one of its techniques. It does not insert itself into ordinary work: "add CSV import" gets CSV import, not a discovery ritual. It also yields rather than competes — general docs, specs and RFCs belong to a documentation skill; UI design and building to a design skill; code-correctness review to a review skill. Where the work overlaps, this skill produces the structured input (a decisions table, a chosen direction, an interaction contract) and hands the deliverable off.
+
+The one thing that runs by default is the compact unknowns scan below: a few lines, no artifact, no interruption.
 
 ### The cross-cutting layer
 
-Even when no technique is triggered, the skill provides defaults for any non-trivial task ([references/scan-and-policies.md](know-your-unknowns/references/scan-and-policies.md)):
+Defaults that apply to any non-trivial task ([references/scan-and-policies.md](know-your-unknowns/references/scan-and-policies.md)):
 
 - **The unknowns scan** — a compact pre-flight classification of what's known, unknown, and suspected, ending in a recommended next move and a **copy-paste trigger phrase**.
-- **Ask-vs-decide policy** — pause for architecture/data/permissions/rollout decisions; decide-and-log (with an assumption record) for local, reversible, conventional ones.
+- **Ask-vs-decide policy** — one test, used before and during implementation: does a conservative option exist, meaning one that **loses no data and widens no access**? If yes, take it, log it, flag it, keep going. If no way forward is conservative, stop and ask — that decision is genuinely yours.
 - **Territory inspection checklist** — flags, migrations, legacy data, reverted PRs, env splits, existing utilities, reviewer expectations.
 - **14 failure modes to avoid** — e.g. copying the most-similar file without checking it's an exception; treating dev/staging behavior as production truth; treating a passing unit test as proof of permission safety.
 
@@ -104,7 +110,7 @@ The archive is deliberately **not** committed to this repository. A build artifa
 1. **State the task** — If no technique is named, the agent runs a compact **Unknowns scan** (four unknown types + recommended next move + **copy-paste trigger phrase**).
 2. **Pick the technique** — See the table above; honor explicit triggers ("interview me", "blindspot pass").
 3. **React via artifacts** — Comparisons, layouts, and quizzes ship as single-file HTML; use the reply builder, then **paste the structured reply back** into chat.
-4. **Fold forward** — The agent parses labeled fields and updates plans/decisions; it does **not** treat replies as background prose. Gates: `semantics confirmed` / structured `Correction:`, plan **go**, agent-scored perfect `Qn:` quiz (never trust a pasted `Quiz score:`).
+4. **Fold forward** — Every artifact carries an id, and the reply leads with `Artifact: KYU-xxxxxx` so a pasted decision is attributable to *that* artifact rather than quoted, replayed, or echoed from scrollback. The agent parses whole whitelist lines and updates the plan before acting. Three checkpoints: `semantics confirmed` before porting, `Go: approve` before implementing, an agent-scored perfect `Q<n>:` quiz before merging (a pasted `Quiz score:` is never a result).
 5. **Fresh session for implementation** — After plan approval, **start a new Agent session** with only the handoff bundle (plan, decisions, mocks/maps, `implementation-notes.md` path). See SKILL.md.
 6. **During / after** — Implementation notes for deviations; buy-in doc and merge quiz when shipping.
 

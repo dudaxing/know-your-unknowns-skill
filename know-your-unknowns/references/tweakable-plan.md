@@ -14,7 +14,17 @@ Open with **summary chips** — one glanceable line: effort, files touched, migr
 
 ## Response mechanism
 
-Per-decision approve/change chips assembling into a copyable reply, ending in an **explicit go/no-go choice**: **approve → prepare handoff** (recommend a fresh session), adjust first, or reject. Optionally include a separate chip/line the user can copy: **continue here / implement in this session**. Also include **"tweak these first"** — the 2–4 one-line overrides the user is most likely to send ("switch storage to render-on-demand", "cut the CSV format"), each copyable as-is. Do not begin implementation in the same turn as presenting the plan — the pause is the point.
+Per-decision approve/change chips assembling into a copyable reply. The reply is led by the plan's **artifact id** and ends in one of exactly three go lines — no paraphrases, since an open-ended "or equivalent" is indistinguishable from ordinary conversation:
+
+```
+Artifact: KYU-4c1e90
+Change: storage -> render-on-demand
+Go: approve
+```
+
+`Go: approve` opens implementation, `Go: adjust` means fold the changes and re-present, `Go: reject` stops. A reply whose `Artifact:` line is missing or belongs to another plan carries no go at all. Optionally include a separate copyable line, **`Session: continue here`**, for implementing without a fresh session — but per [SKILL.md](../SKILL.md) fold-forward rule 4 it only takes effect in a message *after* the one that changed the plan.
+
+Also include **"tweak these first"** — the 2–4 one-line overrides the user is most likely to send ("switch storage to render-on-demand", "cut the CSV format"), each copyable as-is. Do not begin implementation in the same turn as presenting the plan — the pause is the point.
 
 ## Handoff bundle (after go)
 

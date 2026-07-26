@@ -49,20 +49,22 @@ When scanning a codebase, check:
 
 ## Ask-vs-decide policy
 
-**Pause and ask** when the answer could change:
+This is the single rule for "do I stop and ask, or decide and keep going?" — before implementation and in the middle of it alike. [implementation-notes.md](implementation-notes.md) applies it to mid-build surprises; it does not define a competing rule.
 
-- Architecture, execution model, framework, background-job vs sync/client-side design.
-- Scope, object model, or unit of work.
-- Data model, schema, migration, storage, serialization, retention, or API contract.
-- Auth, permissions, privacy, security, billing, compliance, audit logging, data export.
-- User-facing workflow, formats, notifications, irreversible UX, or product policy.
-- Rollout, rollback, performance/reliability targets, operational burden.
+**The test is whether a conservative option exists**, where conservative means exactly this:
 
-**Decide and log** when the issue is:
+> A conservative option **loses no data and widens no access.**
 
-- Local, reversible, conventional, or already implied by repository patterns.
-- Naming, formatting, scaffolding, fixtures, obvious tests, small refactors, low-blast-radius details.
-- A choice where the conservative option is clearly safer and easy to change later.
+- **Such an option exists** → take it, record it (template below), flag it prominently, and keep going. Interrupting for every question that touches permissions or data would make the agent unusable; permission questions arise constantly in real work.
+- **No such option exists** — every way forward would drop data, widen access, or commit to a user-visible or product policy that cannot be walked back → **stop and ask.** This is the case that is genuinely the user's to decide.
+
+Worked example: mid-build you find guest reviewers could download files they should not, via a new export path. Returning 403 for guests loses no data and widens no access, so it is conservative — take it, log it, flag it, continue. But "should guests be able to export at all?" has no conservative answer — every choice sets policy — so that one stops and asks.
+
+The categories below are **examples of where the test usually lands**, not a separate rule. When a category and the test disagree, the test wins.
+
+*Usually no conservative option (expect to stop):* architecture and execution model; scope and object model; schema, migration, retention, or API contract changes; anything widening auth, permissions, privacy, billing, or data export; irreversible user-facing behaviour or product policy; rollout and rollback commitments.
+
+*Usually conservative and reversible (expect to decide and log):* naming, formatting, scaffolding, fixtures, obvious tests, small refactors, anything local and easy to change later, and anything the repository's existing patterns already imply.
 
 When deciding without asking, record:
 

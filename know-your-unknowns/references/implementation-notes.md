@@ -27,14 +27,14 @@ If the user continues in the same session without handoff, still create the log 
 
 - **Plan-confirmed** — the plan's assumption checked out (brief; still worth recording as verified territory).
 - **Discovery** — the code already contains something better than the plan (e.g. a production-tested `zipStream.ts` utility, an existing `useProgressChannel()` hook), eliminating planned work or dependencies.
-- **Deviation** — reality contradicts the plan, forcing a choice on the spot (see conservative-choice rule).
-- **Needs human judgment** — a decision with product implications the agent must not make alone (guest access policy, retention windows, anything user-visible or security-relevant). Log it, take the conservative interim path, and surface it prominently.
+- **Deviation** — reality contradicts the plan, forcing a choice on the spot. A conservative option existed, so it was taken and logged rather than interrupting the user.
+- **Needs human judgment** — no conservative option existed: every way forward would lose data, widen access, or set a user-visible or product policy (guest access policy, retention windows). By the ask-vs-decide test in [scan-and-policies.md](scan-and-policies.md) this **stops and asks** — log it, state what you would do and why, and wait rather than choosing for the user.
 
 ## Entry format
 
 - Timestamp.
 - **What the plan said** vs **what the code revealed** — explicit contrast.
-- **The conservative choice taken**, with reasoning. The conservative-choice rule: when surprised, pick the option that loses no data and widens no access. Examples of the pattern: ~12% of annotations predate a migration and lack frame timestamps → exclude from video burn-in but include in CSV with a flag, nothing silently dropped; the queue serializes `Date` to ISO strings through JSON breaking staleness checks → define typed wire-format payloads and parse at the worker boundary; guest reviewers with download restrictions could exfiltrate via the new export path → return 403 for all formats, mirroring existing asset checks.
+- **The conservative choice taken**, with reasoning — or, if none existed, the question put to the user. Conservative means: **loses no data and widens no access** (the ask-vs-decide test in [scan-and-policies.md](scan-and-policies.md); this file does not define a second rule). Examples of the pattern: ~12% of annotations predate a migration and lack frame timestamps → exclude from video burn-in but include in CSV with a flag, nothing silently dropped; the queue serializes `Date` to ISO strings through JSON breaking staleness checks → define typed wire-format payloads and parse at the worker boundary; guest reviewers with download restrictions could exfiltrate via the new export path → return 403 for all formats, mirroring existing asset checks.
 - **Revisit** notes — what to reconsider later if assumptions change.
 
 ## Log footer (maintained continuously, finalized at session end)

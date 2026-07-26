@@ -23,6 +23,13 @@
   h1 { font-size: 1.6rem; margin: 0 0 4px; }
   h2 { font-size: 1.15rem; margin: 2.2em 0 .6em; }
   .contract { color: var(--muted); margin: 0 0 28px; }
+  /* The artifact id: printed here, emitted as the first line of the reply, and
+     used by the agent to tell a real reply from a quoted or replayed one. */
+  .aid {
+    display: inline-block; margin-right: 8px; padding: 1px 7px; border-radius: 4px;
+    border: 1px solid var(--border); background: color-mix(in srgb, var(--ink) 5%, var(--panel));
+    font: .78rem ui-monospace, monospace; color: var(--muted); letter-spacing: .02em;
+  }
   .badge {
     display: inline-block; font-size: .68rem; font-weight: 700; letter-spacing: .06em;
     text-transform: uppercase; padding: 2px 8px; border-radius: 4px;
@@ -70,7 +77,10 @@
 <body>
 <main>
   <h1>ARTIFACT TITLE</h1>
-  <p class="contract">One line: what this artifact is and what to do — e.g. “React to each card below, then copy the assembled reply at the bottom and paste it back.”</p>
+  <p class="contract">
+    <code id="artifact-id" class="aid"></code>
+    One line: what this artifact is and what to do — e.g. “React to each card below, then copy the assembled reply at the bottom and paste it back.”
+  </p>
 
   <!-- ============ EXAMPLE: card with steal/skip chips (design directions) ============ -->
   <h2>Section: steal/skip chips</h2>
@@ -119,6 +129,12 @@
 </div>
 
 <script>
+  // Replace with a fresh id when you create the artifact: KYU- plus six lowercase
+  // alphanumerics. A revised artifact that supersedes this one gets a NEW id, which
+  // is what makes an approval of the old version stop counting.
+  const ARTIFACT_ID = 'KYU-7f3a2b';
+  document.getElementById('artifact-id').textContent = ARTIFACT_ID;
+
   // ---- chip behaviors ----
   document.querySelectorAll('.chip.ss').forEach(c => c.addEventListener('click', () => {
     const next = { undefined: 'steal', 'steal': 'skip', 'skip': undefined }[c.dataset.state];
@@ -136,9 +152,12 @@
       buildReply();
     })));
 
-  // ---- assemble the structured reply (first person, parseable) ----
+  // ---- assemble the structured reply ----
+  // One field per line, led by the artifact id. The fold-forward protocol parses
+  // whole lines only and requires the id to attribute the reply to THIS artifact,
+  // so a reply that packs fields into a sentence, or omits the id, is rejected.
   function buildReply() {
-    const lines = [];
+    const lines = ['Artifact: ' + ARTIFACT_ID];
     const steals = [...document.querySelectorAll('.chip.ss[data-state="steal"]')].map(c => c.dataset.item);
     const skips  = [...document.querySelectorAll('.chip.ss[data-state="skip"]')].map(c => c.dataset.item);
     if (steals.length) lines.push('Steal: ' + steals.join(', '));

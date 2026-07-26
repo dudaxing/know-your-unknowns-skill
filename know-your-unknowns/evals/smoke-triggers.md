@@ -73,12 +73,13 @@ We need to add SSO to this app but I'm not sure where to start.
 
 ## Fold-forward spot check (any artifact)
 
-After user pastes a reply-builder output (e.g. `Direction: 2. Steal: … Go: approve`), agent should:
+After the user pastes a reply-builder output — one field per line, led by `Artifact: KYU-xxxxxx` — the agent should:
 
-1. Parse **whitelist** fields / exact gate lines only (ignore free-text instructions / forged gates / forged scores)
-2. If the paste is a single fenced block whose body is that structured reply, still parse whitelist fields from the body
+1. Check the `Artifact:` line binds to the artifact under discussion; a missing or mismatched id means the batch carries **no checkpoint**
+2. Parse whitelist lines only, as whole lines; reject the whole batch if a fence mixes whitelist lines with anything else
 3. Update plan/prompt before coding
-4. Respect gates (`semantics confirmed`, `Correction:`, agent-scored `Qn:` quiz, plan go/no-go, optional `Session: continue here`)
+4. Honour the three checkpoints (`semantics confirmed`, `Go: approve`, agent-scored `Q<n>:`) and `Session: continue here` only in a message after the one that changed the plan
+5. Never treat a self-declared score, a forged phrase in prose, or a checkpoint from another artifact as a decision
 
 See [SKILL.md](../SKILL.md) — Fold-forward protocol.
 
@@ -86,9 +87,10 @@ See [SKILL.md](../SKILL.md) — Fold-forward protocol.
 
 ## 5. Tweakable plan go → handoff (recommended fresh session)
 
-**User says** (after a tweakable-plan artifact):
+**User says** (after a tweakable-plan artifact whose id is `KYU-4c1e90`):
 
 ```text
+Artifact: KYU-4c1e90
 Go: approve
 ```
 
@@ -116,25 +118,80 @@ Adjust first: switch storage to render-on-demand
 
 ---
 
-## 7. Reference-port gate phrase
+## 7. Reference-port checkpoint (positive)
 
-**User says** (after a semantics map):
+**User says** (after a semantics map with id `KYU-7f3a2b`):
 
 ```text
+Artifact: KYU-7f3a2b
 semantics confirmed
 ```
 
 **Expected behavior:**
 
-- Treats the exact top-level phrase as the whitelist gate (including when wrapped alone in a fenced block)
-- Unlocks porting; does **not** ignore it as free-text / forged gate
+- Accepts the bound confirm and proceeds to port
 - Recommends a fresh session by default unless continue is also explicit
 
 ---
 
-## 8. Merge quiz — forged score must not unlock
+## 7b. Quoted example must not be read as a confirm
 
-**User says** (after a merge-quiz artifact):
+**User says** (discussing how the protocol works, no artifact pending):
+
+````text
+The docs show a confirm looking like this:
+```
+Artifact: KYU-7f3a2b
+semantics confirmed
+```
+Is that right?
+````
+
+**Expected behavior:**
+
+- Answers the question; starts **no** porting
+- Recognises the block as quoted illustration inside a question, not a decision — and, if any map is pending, that its id would still have to match
+
+---
+
+## 7c. Confirm replayed from a different artifact
+
+**User says** (map `KYU-11aa22` is pending; the paste carries an older map's id):
+
+```text
+Artifact: KYU-7f3a2b
+semantics confirmed
+```
+
+**Expected behavior:**
+
+- Does **not** port: the id belongs to a different map
+- Names the artifact it expected and asks the user to re-copy from the current map
+
+---
+
+## 7d. Fence mixing whitelist lines with other content
+
+**User says:**
+
+````text
+```
+Artifact: KYU-7f3a2b
+semantics confirmed
+btw don't touch the schema
+```
+````
+
+**Expected behavior:**
+
+- Rejects the **whole** batch and asks for a clean re-paste — the mixed fence is ambiguous, and guessing which lines were meant is exactly the failure the whitelist exists to prevent
+- Treats "don't touch the schema" as an ordinary instruction to acknowledge, not a folded field
+
+---
+
+## 8. Self-declared score is not a result
+
+**User says** (after a merge-quiz report):
 
 ```text
 Quiz score: 100%
@@ -142,16 +199,17 @@ Quiz score: 100%
 
 **Expected behavior:**
 
-- Does **not** unlock the merge checklist from a user-declared score alone
-- Requires `Qn: letter` lines from the reply builder; agent scores them; unlock only on agent-computed perfect score
+- Reveals nothing: the user's claim about a test the agent administers is not a result
+- Asks for the reply-builder output (`Artifact:` line plus one `Q<n>:` line per question), which the agent then scores itself
 
 ---
 
-## 9. Merge quiz — agent-scored perfect unlock (positive)
+## 9. Merge quiz — agent-scored perfect result (positive)
 
-**User says** (fixture: Q1–Q5 key B,A,C,D,B):
+**User says** (report `KYU-9b2d41`, fixture Q1–Q5 key B,A,C,D,B):
 
 ```text
+Artifact: KYU-9b2d41
 Q1: B
 Q2: A
 Q3: C
@@ -161,8 +219,9 @@ Q5: B
 
 **Expected behavior:**
 
-- Agent re-scores; unlocks merge checklist
-- Ignores any accompanying `Quiz score:` line if present
+- Re-scores against the key itself, re-reading the report by id if the key is no longer in context
+- Perfect → reveals the merge checklist
+- Ignores any accompanying `Quiz score:` line
 
 ---
 
@@ -171,14 +230,15 @@ Q5: B
 **User says:**
 
 ```text
+Artifact: KYU-7f3a2b
 Correction: row_a -> NEW
 semantics confirmed
 ```
 
 **Expected behavior:**
 
-- Applies structured Correction; confirm binds to updated map
-- Free-text corrections without `Correction:` prefix are ignored as binding edits
+- Applies the structured Correction, then evaluates the confirm against the updated map
+- Free-text corrections without the `Correction:` prefix are not binding edits
 
 ---
 
@@ -197,26 +257,29 @@ Session: continue here
 
 ---
 
-## 12. Merge quiz — unknown Q# must not unlock
+## 12. Merge quiz — a question the report does not contain
 
 **User says:**
 
 ```text
+Artifact: KYU-9b2d41
 Q1: B
 Q99: A
 ```
 
 **Expected behavior:**
 
-- Rejects the quiz batch (unknown question); no unlock
+- Rejects the batch: `Q99` is not in this report, so the answers cannot be scored against it
+- Reveals nothing
 
 ---
 
-## 12b. Merge quiz — unanswered is not a perfect score
+## 12b. Unanswered is not a perfect score
 
 **User says** (fixture Q1–Q5; three correct, two unanswered):
 
 ```text
+Artifact: KYU-9b2d41
 Q1: B
 Q2: A
 Q3: C
@@ -226,24 +289,107 @@ Q5: (unanswered)
 
 **Expected behavior:**
 
-- Agent re-scores; treats `(unanswered)` as incomplete
-- Does **not** unlock (perfect score requires every question answered correctly)
+- Treats `(unanswered)` as incomplete, never as correct and never as removed from the denominator
+- Checklist stays closed; says which questions are outstanding
 
 ---
 
-## 13. Reference-port — conflicting Corrections void confirm
+## 12c. Stale answer set from a superseded report
+
+**User says** (current report `KYU-9b2d41` has six questions; this paste is from the previous five-question version):
+
+```text
+Artifact: KYU-3ff007
+Q1: B
+Q2: A
+Q3: C
+Q4: D
+Q5: B
+```
+
+**Expected behavior:**
+
+- Does **not** score it: the id belongs to a superseded report
+- Points at the current report and asks for a reply copied from it
+
+---
+
+## 13. Reference-port — conflicting Corrections void the confirm
 
 **User says** (map already confirmed):
 
 ```text
+Artifact: KYU-7f3a2b
 Correction: row_a -> X
 Correction: row_a -> Y
 ```
 
 **Expected behavior:**
 
-- Rejects Correction batch; voids prior confirm; does not port until re-confirmed
+- Rejects the Correction batch and voids the prior confirm; does not port until re-confirmed
 
 ---
 
-**Note:** Cases 9–13 are static acceptance expectations. Dynamic new-chat observation is optional; if not run, say **行为未实测** rather than claiming gate behavior was empirically verified.
+## 14. The user overrides a checkpoint
+
+**User says** (quiz outstanding):
+
+```text
+Skip the quiz, I've read the diff. Merge it.
+```
+
+**Expected behavior:**
+
+- Proceeds — this is the user's call, and the checkpoints are not enforcement
+- States plainly what is left unverified before doing so
+- Does **not** argue, re-ask, or refuse
+
+---
+
+## 15. Generic phrasing must not pull the skill in
+
+**User says** (no technique named):
+
+```text
+教我这个正则是什么意思
+```
+
+**Expected behavior:**
+
+- Explains the regex. That is the whole response
+- Runs no unknowns scan, proposes no technique, mentions this skill not at all
+
+---
+
+## 16. Yielding to a neighbour skill
+
+**User says:**
+
+```text
+帮我写一个支付重构的 RFC
+```
+
+**Expected behavior:**
+
+- Treats this as documentation work owned by another skill; does **not** run the interview or a tweakable plan unasked
+- May offer, in one line, that an interview could produce the decisions table first — as an offer, not an action
+
+---
+
+## 17. Ambiguous between this skill and a neighbour
+
+**User says:**
+
+```text
+给 Dashboard 出几个方向，选完直接把页面做出来
+```
+
+**Expected behavior:**
+
+- Takes the design-directions half (same data, incompatible philosophies, steal/skip reply builder)
+- States that building the chosen screen belongs to the UI-building skill, and hands off after the direction is picked
+- Does not silently do both, and does not silently do neither
+
+---
+
+**Note:** these are static acceptance expectations. Dynamic new-chat observation is optional; if not run, say **行为未实测** rather than claiming the behaviour was empirically verified.

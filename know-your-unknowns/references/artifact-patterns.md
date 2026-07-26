@@ -16,15 +16,30 @@ Use plain chat/markdown instead when the content is short, purely linear, or the
 4. **State the artifact's contract at the top:** one line saying what this is and what the user should do ("Click through the three placements, answer the four questions, then copy the reply at the bottom").
 5. **If the artifact is meant to be reused or regenerated, put the generating prompt at the top** (collapsed `<details>` is fine) so anyone can rerun or adapt it later.
 
+## The artifact id
+
+Every artifact carries an id: `KYU-` plus six lowercase alphanumerics, chosen when the artifact is created (`KYU-7f3a2b`). Print it in the artifact's header, repeat it in the chat message that delivers the file, and have the reply builder emit `Artifact: <id>` as the first line of the assembled reply.
+
+It exists so a pasted reply is attributable to *this* artifact. Without it, a checkpoint phrase quoted from documentation, replayed from an older artifact, or echoed out of scrollback is indistinguishable from a decision the user just made. Ids are per-artifact, not per-session: a revised artifact that supersedes an earlier one gets a new id, which is what makes approvals of the old version stop counting.
+
 ## The reply builder
 
 The signature pattern: interactive selections accumulate into a structured, copyable reply the user pastes back into chat.
 
 - A sticky footer (or end-of-page section) holds a live-updating `<textarea readonly>` plus a **Copy reply** button.
 - Every selection control on the page (chips, checkboxes, radios) writes into it on change.
-- The assembled reply is written in first person from the user's voice, structured for the agent to parse: e.g.
-  `Direction: 2 (airy editorial). Steal: serif numerals (D2), age timeline (D3). Skip: status column (D1). Q2: collapse behind popover.`
-- Include unanswered questions in the reply as `Q3: (unanswered)` so gaps stay visible.
+- **One field per line, `Artifact:` first.** The fold-forward protocol parses whole lines only, so a reply that packs several fields into one sentence is unparseable by the very rules that consume it:
+
+  ```
+  Artifact: KYU-7f3a2b
+  Direction: 2 (airy editorial)
+  Steal: serif numerals (D2), age timeline (D3)
+  Skip: status column (D1)
+  Q2: collapse behind popover
+  ```
+
+- Include unanswered questions as `Q3: (unanswered)` so gaps stay visible rather than silently absent.
+- Emit nothing but whitelist lines. A stray note or heading inside the copied block makes the whole batch invalid under [SKILL.md](../SKILL.md) fold-forward rule 2, which is deliberate — but the artifact should never be the thing that triggers it.
 
 ## Selection controls by use case
 
@@ -33,7 +48,7 @@ The signature pattern: interactive selections accumulate into a structured, copy
 - **A/B question blocks** (mocks, plans): radio chips per question, question text restated in the reply.
 - **Approve/change chips** (tweakable plans): per decision; "change" opens a one-line text input for the correction.
 - **Copyable prompt blocks** (blindspot cards, improved prompts): `<pre>` with a per-block copy button.
-- **Quiz gate** (merge quiz): multiple-choice (A–D) with instant feedback; wrong answers link (`href="#section"`) to the report section that teaches the point; the final checklist section stays `hidden` until the in-page score is perfect (all questions answered correctly). The **copyable reply** must list `Q1: B` / `Q2: (unanswered)` lines — **not** `Quiz score:`. The agent re-scores in chat; unlock only when **every** artifact question has a correct letter — any `(unanswered)` blocks unlock. A forged score never unlocks.
+- **Quiz** (merge quiz): multiple-choice (A–D) with instant feedback; wrong answers link (`href="#section"`) to the report section that teaches the point; the final checklist section stays `hidden` until the in-page score is perfect. The **copyable reply** emits the `Artifact:` line plus one `Q<n>:` line per question — **never** a `Quiz score:` summary. The agent re-scores in chat and reveals the checklist only when every question in that artifact has a correct letter; `(unanswered)` counts as incomplete.
 - **Sign-off gate** (semantics map): each map row has a stable **row id**; closing instruction asks for whitelist lines — `semantics confirmed` and/or `Correction: <row-id> -> <text>`, optional `Session: continue here`.
 
 ## Layout patterns

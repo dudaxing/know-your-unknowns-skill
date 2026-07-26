@@ -20,14 +20,23 @@
 2. **Side-by-side code pairs** — 2–4 annotated source/target excerpts for the trickiest translations, with **load-bearing details flagged by name**: e.g. Rust integer division → JS `Math.floor`, where the `newTokens > 0` guard is "the load-bearing guard — drop it and the bucket stops refilling under frequent polling"; Rust inclusive range `lo..=hi` → `lo + Math.floor(random() * (span + 1))` where the `+1` is "a one-character bug magnet"; Rust `Mutex` → event-loop synchronous contract where "an `await` inserted between check and debit lets two retries both pass."
 3. **Preserve / change / drop table** — every design choice classified: preserved exactly (formulas, economics, guards); deliberately changed with justification (`Instant` → `performance.now()`, both monotonic; `u64` nanos → `number` ms with floor to preserve truncation; injectable RNG); dropped as inapplicable (overflow guards unreachable in the target, thread-safety primitives, foreign instrumentation).
 4. **Edge-case table** — rows of edge case → reference behavior → target equivalent → status (`identical` / `equivalent*`), with asterisks explaining every deliberate difference (e.g. bare `false` becomes a typed `RetryBudgetExhausted` error for the UI). Cover: clock skew, burst at t=0, exhaustion under sustained failure, sub-unit accumulation, behavior at caps.
-5. **Sign-off gate** — give every preserve/change/drop and edge-case row a stable **row id** (`^[a-z][a-z0-9_-]{0,63}$`, unique, case-sensitive). End with: reply using whitelist lines only — exact **`semantics confirmed`**, and/or **`Correction: <row-id> -> <replacement text>`** (one per corrected row). Optionally add **`Session: continue here`** to implement in this session after confirm. Do not start porting until a valid confirm clears the gate.
+5. **Sign-off checkpoint** — print the map's **artifact id** (`KYU-xxxxxx`) in the header, and give every preserve/change/drop and edge-case row a stable **row id** (`^[a-z][a-z0-9_-]{0,63}$`, unique, case-sensitive). End with: reply using whitelist lines only, led by the `Artifact:` line — exact **`semantics confirmed`**, and/or **`Correction: <row-id> -> <replacement text>`** (one per corrected row). Optionally add **`Session: continue here`** to implement in this session after confirm. Do not start porting until a bound, valid confirm arrives.
 
 ## Reply / fold-forward
 
-- Reply builder emits full lines: `Correction: row_id -> …` and/or `semantics confirmed`, optional `Session: continue here`.
-- Free-text corrections are not binding — only structured `Correction:` lines. Unknown id, empty replacement, missing ` -> `, or conflicting duplicate ids in one paste → reject that Correction batch and void any prior confirm.
-- A valid `semantics confirmed` freezes the map until a new accepted Correction batch (which voids confirm until re-confirmed).
-- After confirm: recommend a fresh implementation session by default; if the user also sends `Session: continue here` (same paste or a later sole continue message), implement in-session per [SKILL.md](../SKILL.md) option-2 handoff.
+Reply builder emits, as whole lines:
+
+```
+Artifact: KYU-7f3a2b
+Correction: refill_truncation -> keep the newTokens > 0 guard, it is load-bearing
+semantics confirmed
+```
+
+- **The `Artifact:` line is what makes the confirm attributable.** Without it — or with an id belonging to a different map — the paste carries no confirm, however well-formed the rest looks. Say which map you expected and ask the user to re-copy from it. This is what stops a `semantics confirmed` quoted from a document, replayed from an older map, or echoed out of scrollback from starting a port.
+- Free-text corrections are not binding — only structured `Correction:` lines. Unknown row id, empty replacement, missing ` -> `, or conflicting duplicates in one batch → reject that Correction batch and void any prior confirm.
+- A valid `semantics confirmed` freezes the map until a new accepted Correction batch, which voids it until re-confirmed.
+- After confirm: recommend a fresh implementation session by default; if the user also sends `Session: continue here` (in a later message, per [SKILL.md](../SKILL.md) fold-forward rule 4), implement in-session.
+- This is a checkpoint, not a lock. If the user says to port without confirming, say what is unverified and proceed — the point is that *you* never mistake unconfirmed for confirmed.
 
 ## Rules
 
