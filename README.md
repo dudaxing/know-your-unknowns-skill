@@ -191,6 +191,10 @@ This skill synthesizes three sources, keeping the best of each:
 2. **[GreatMark/fable-field-guide-skills](https://github.com/GreatMark/fable-field-guide-skills)** — behavioral rules (anchor on the user's starting point first; recommend an option in every interview question; push one design direction beyond stated taste) and artifact hygiene (scratch directories, git info/exclude, never committing scaffolding).
 3. **An `unknowns-driven-development` variant** — the cross-cutting policy layer: the default unknowns scan, the ask-vs-decide policy, and the failure-modes list.
 
+## Licence
+
+[MIT](LICENSE). The methodology is Thariq Shihipar's and published openly; this repository is an independent implementation of it as an agent skill, and the MIT grant covers that implementation.
+
 ## Credits
 
 Methodology by [Thariq Shihipar](https://thariqs.github.io/) (Anthropic), from the "Know Your Unknowns" field guide and the HTML-effectiveness companion demos. This repository is an independent skill implementation for AI coding agents.

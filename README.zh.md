@@ -191,6 +191,10 @@ scripts/
 2. **[GreatMark/fable-field-guide-skills](https://github.com/GreatMark/fable-field-guide-skills)**——行为规则（先锚定用户起点；访谈每题给推荐项；至少一个设计方向要超出用户既有品味）与工件卫生（scratch 目录、git info/exclude、脚手架不进 changeset）。
 3. **一个 `unknowns-driven-development` 变体**——横切政策层：默认 unknowns scan、ask-vs-decide 政策、失败模式清单。
 
+## 许可证
+
+[MIT](LICENSE)。方法论属于 Thariq Shihipar 且已公开发表；本仓库是把它实现为 agent skill 的独立作品，MIT 授权覆盖的是这份实现。
+
 ## 致谢
 
 方法论来自 [Thariq Shihipar](https://thariqs.github.io/)（Anthropic）的 "Know Your Unknowns" field guide 与 HTML-effectiveness 配套演示。本仓库是面向 AI 编码 agent 的独立 skill 实现。
