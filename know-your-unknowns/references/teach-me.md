@@ -6,7 +6,7 @@
 
 ## Workflow
 
-**Step 0 — Anchor.** One short message: what's their current exposure to the domain, and what task are they trying to direct? Calibrate the ladder to start just above what they know.
+**Step 0 — Establish where to start the ladder.** You need their current exposure to the domain and the task they are trying to direct, so the ladder can start just above what they already know. If the request says it ("I know nothing about colour grading, I need to direct an editor"), that is your answer — start teaching. Ask only when the level is genuinely unclear, and then in one short message.
 
 **Step 1 — Build the explainer artifact.**
 

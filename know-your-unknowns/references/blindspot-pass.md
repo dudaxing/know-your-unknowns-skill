@@ -6,7 +6,7 @@
 
 ## Workflow
 
-**Step 0 — Anchor on the user's starting point.** One short message, at most three sub-questions: experience with this codebase/area, decisions already made, what they plan to do next. This calibrates which findings are blindspots *for them* rather than generic facts.
+**Step 0 — Establish the user's starting point, asking only for what is missing.** You need three things: their experience with this codebase or area, decisions already made, and what they plan to do next — that is what separates a blindspot *for them* from a generic fact. Take whatever the request already supplies ("I've never opened this module", "we've settled on the queue, I need the export path") and ask only for the rest, at most three sub-questions in one short message. When the request covers all three, ask nothing and start scanning; re-asking what was just said costs a turn and reads as not having listened.
 
 **Step 1 — Explore the territory.** Scan the module's code, git log/blame, reverted PRs and their discussion threads, feature-flag configs per environment, event-bus topics, registration/wiring conventions, TODO/FIXME comments — focusing on what the user's task description *omitted*.
 

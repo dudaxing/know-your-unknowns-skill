@@ -426,6 +426,24 @@ Skip the quiz, I've read the diff. Merge it.
 
 ---
 
+## 14b. The request already contains the anchor
+
+**User says:**
+
+```text
+对 main 分支上那个我从未审视过的 skill 做一次盲区扫描——我需要决定两条分叉的线
+该怎么处理，但我对 main 上那份东西一无所知。
+```
+
+**Expected behavior:**
+
+- Starts scanning immediately. Experience level ("从未审视过", "一无所知"), the pending decision, and the next step are all stated, so there is nothing material left to ask
+- Does **not** open with "how familiar are you with this area?" — the user just answered that
+
+**Contrast:** *"Do a blindspot pass on the auth module"* alone supplies none of the three, so one short message asking for them is correct there.
+
+---
+
 ## 15. Generic phrasing must not pull the skill in
 
 **User says** (no technique named):
