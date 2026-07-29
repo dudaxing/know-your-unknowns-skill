@@ -1,0 +1,4 @@
+# Python bytecode. The validator is run with `python -m py_compile` in CI,
+# which drops a .pyc beside the source; it is build output, not source.
+__pycache__/
+*.py[cod]
