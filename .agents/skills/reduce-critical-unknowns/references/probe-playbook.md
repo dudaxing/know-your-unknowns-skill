@@ -10,8 +10,9 @@ Use this playbook to choose one probe family. Do not run the families as a seque
 4. Human decision probe
 5. Deviation probe
 6. Readiness evidence probe
-7. Explicit-request mapping
-8. Low-friction handoffs
+7. Option-space scan
+8. Explicit-request mapping
+9. Low-friction handoffs
 
 ## 1. Territory scan
 
@@ -80,13 +81,25 @@ Use this to decide whether a large or high-risk change is ready to merge, deploy
 
 A quiz can reveal misunderstanding when explicitly requested, but it does not prove correctness and must not replace tests or independent verification.
 
-## 7. Explicit-request mapping
+## 7. Option-space scan
+
+Use this when the problem is established but the intervention is not, and the risk is picking the first plausible fix rather than picking wrongly among known paths.
+
+- **Minimum action:** Before proposing anything new, enumerate what the repository already makes possible: dormant flags, seeded fixtures, backend state no surface reads, admin-only tooling, deliberately limited capabilities, dead-end states missing an affordance that exists elsewhere, and TODOs left by the original author. Order candidates by cost to reach working behavior, cheapest first, and label each as wiring existing parts, new surface, or new lifecycle.
+- **Evidence:** A locator per candidate showing what already exists and how far it sits from working, plus the user's selection of which candidates match their intent.
+- **Handoff:** The selected candidates become the option set for the next decision; record rejected ones with the reason so the same sweep is not repeated.
+- **Stop:** The cheapest credible candidate is visible and a further sweep would only produce variants of what is already listed.
+
+Do not propose a net-new system when finishing an existing one tests the same hypothesis. Do not pad to a fixed count; an honest three beats a padded ten.
+
+## 8. Explicit-request mapping
 
 Respect the user's named intent while keeping the action proportional:
 
 | User intent | Smallest matching family |
 |---|---|
 | Find blind spots or audit assumptions | Territory scan |
+| Brainstorm where to intervene when the fix is not obvious | Option-space scan |
 | Teach the missing vocabulary | Contrast/executable probe focused on terms and oracle |
 | Show directions, mock, or prototype first | Contrast or executable probe |
 | Interview me or clarify the high-impact requirement | Human decision probe |
@@ -97,7 +110,7 @@ Respect the user's named intent while keeping the action proportional:
 
 Do not force the historical technique's original output medium, item count, or gate.
 
-## 8. Low-friction handoffs
+## 9. Low-friction handoffs
 
 Use a plain response when possible. At a boundary, choose one compact shape.
 

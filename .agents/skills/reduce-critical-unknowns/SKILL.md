@@ -89,6 +89,8 @@ Use the result immediately:
 
 For a human choice, show the evidence already gathered, the decision it affects, and two or three materially different options. Put the recommended option first and explain consequences. Ask one question when its answer changes later questions; batch a few independent choices when that is cheaper for the user.
 
+When the result is a plan or sequence put up for review, order it by how likely each part is to be revised, not by execution order. Lead with the judgment calls — data model, interface shape, user-visible behavior, permissions, rollout — each with the alternative that was rejected and the condition that would make it win instead. Compress work that is mechanical or already settled by convention into a single line. Execution order buries the revisable decisions in the middle, where a reviewer's attention has already been spent on steps they were never going to change.
+
 When implementation contradicts the plan, capture only a material deviation:
 
 ```text
