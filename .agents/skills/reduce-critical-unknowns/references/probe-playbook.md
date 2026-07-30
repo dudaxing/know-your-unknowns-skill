@@ -11,8 +11,9 @@ Use this playbook to choose one probe family. Do not run the families as a seque
 5. Deviation probe
 6. Readiness evidence probe
 7. Option-space scan
-8. Explicit-request mapping
-9. Low-friction handoffs
+8. Shared-vocabulary probe
+9. Explicit-request mapping
+10. Low-friction handoffs
 
 ## 1. Territory scan
 
@@ -81,6 +82,8 @@ Use this to decide whether a large or high-risk change is ready to merge, deploy
 
 A quiz can reveal misunderstanding when explicitly requested, but it does not prove correctness and must not replace tests or independent verification.
 
+When the remaining gate is other people's approval, treat each reviewer's likely objection as an unknown and pre-run the probe that answers it: the security owner asks about the permission boundary, whoever carries the pager asks about rollback and observability, the product owner asks what users will notice. Lead with the thing working — a run, a trace, a recording — because architecture argued before belief is argued twice. State the limitations yourself; a gap you name costs a line, and the same gap found by a reviewer costs the review. Name each approver with the single decision they own, so nobody has to work out whether they are being informed or asked.
+
 ## 7. Option-space scan
 
 Use this when the problem is established but the intervention is not, and the risk is picking the first plausible fix rather than picking wrongly among known paths.
@@ -92,7 +95,18 @@ Use this when the problem is established but the intervention is not, and the ri
 
 Do not propose a net-new system when finishing an existing one tests the same hypothesis. Do not pad to a fixed count; an honest three beats a padded ten.
 
-## 8. Explicit-request mapping
+## 8. Shared-vocabulary probe
+
+Use this when the user cannot specify or judge the work because the distinctions that matter carry no names in the conversation. The blocking unknown is the acceptance criterion, not the implementation.
+
+- **Minimum action:** Name only the terms that change a decision in this task. For each: what it means in plain words, which decision it changes, the misreading that costs the most, and a sentence the user can say to specify it next time. Then state what the field actually judges by, as observable checks rather than adjectives.
+- **Evidence:** The user makes a call using one of the terms that they could not make before, or a worked pair where the distinction visibly changes the outcome.
+- **Handoff:** The named checks become the acceptance criteria or test oracle; the terms carry into the next request instead of being re-derived each time.
+- **Stop:** The user can say what "good" means here in words another person could verify against. Further teaching has no decision left to change.
+
+Do not deliver a glossary of the field. A term that changes no decision in this task is not worth its cost, and a rubric of adjectives is not an oracle.
+
+## 9. Explicit-request mapping
 
 Respect the user's named intent while keeping the action proportional:
 
@@ -100,17 +114,18 @@ Respect the user's named intent while keeping the action proportional:
 |---|---|
 | Find blind spots or audit assumptions | Territory scan |
 | Brainstorm where to intervene when the fix is not obvious | Option-space scan |
-| Teach the missing vocabulary | Contrast/executable probe focused on terms and oracle |
+| Teach the missing vocabulary or the quality bar | Shared-vocabulary probe |
 | Show directions, mock, or prototype first | Contrast or executable probe |
 | Interview me or clarify the high-impact requirement | Human decision probe |
 | Map or port reference behavior | Contract and semantics map |
 | Review or make a plan tweakable | Human decision probe on judgment calls |
 | Record implementation surprises | Deviation probe |
-| Prepare approval evidence or test merge understanding | Readiness evidence probe |
+| Prepare approval evidence for named reviewers | Readiness evidence probe, approval boundary |
+| Test merge understanding before a risky merge | Readiness evidence probe |
 
 Do not force the historical technique's original output medium, item count, or gate.
 
-## 9. Low-friction handoffs
+## 10. Low-friction handoffs
 
 Use a plain response when possible. At a boundary, choose one compact shape.
 

@@ -103,6 +103,8 @@ Continue autonomously for reversible local deviations. Pause the related branch 
 
 Map important acceptance criteria to concrete evidence. For high-risk work, also inspect failure paths, rollback or containment, observability, and the maintainer's before/after mental model. Prefer an independent check that starts from the criteria and diff rather than the implementer's explanation.
 
+When the last gate is a person's approval rather than a test, the same evidence has to answer their question instead of yours; select it by what each named approver will probe.
+
 Stop exploring and continue work when all are true:
 
 - The next bounded action has an evidence-supported path.
